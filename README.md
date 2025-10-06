@@ -66,7 +66,7 @@ npm --version
 ### 1️⃣ Clone & Setup
 ```bash
 # Clone repository
-git clone (https://github.com/haikalthrq/Website-PODES-Batu-2024.git)
+git clone https://github.com/haikalthrq/Website-PODES-Batu-2024.git
 cd podes_batu_webapp
 
 # Install dependencies untuk semua parts
