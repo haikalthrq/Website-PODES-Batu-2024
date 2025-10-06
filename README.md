@@ -116,56 +116,6 @@ npm run dev  # Vite dev server runs on http://localhost:3000
 
 ---
 
-## 💡 Untuk Programmer
-
-### 📚 Konsep yang Dipelajari di Project Ini
-
-#### 1. **Frontend Architecture**
-```
-🎯 Component-based Architecture
-├── 📁 components/        # Reusable UI pieces  
-├── 📁 pages/            # Full page components
-├── 📁 services/         # API communication
-├── 📁 config/           # App configurations  
-└── 📁 utils/            # Helper functions
-```
-
-#### 2. **React Patterns yang Digunakan**
-- **Custom Hooks** - Logic reuse (`useFilters`, `useVillageData`)
-- **Component Composition** - Building complex UI from simple parts
-- **State Management** - useState, useEffect, useMemo
-- **Error Boundaries** - Graceful error handling
-- **Lazy Loading** - Performance optimization
-
-#### 3. **Data Flow Pattern**
-```
-API → Services → Components → State → UI
-```
-
-#### 4. **Modern JavaScript Features**
-- ES6+ syntax (arrow functions, destructuring, template literals)
-- Async/await untuk API calls
-- Module imports/exports
-- Array methods (map, filter, reduce)
-
-### 🎓 Learning Path Recommendations
-
-**Beginner → Intermediate**
-1. ✅ HTML, CSS, JavaScript fundamentals
-2. ✅ React basics (components, props, state)
-3. 📖 React Hooks (useState, useEffect)
-4. 📖 API integration with fetch/axios
-5. 📖 Material-UI component library
-
-**Intermediate → Advanced**
-1. 📖 Advanced React patterns (custom hooks, context)
-2. 📖 Performance optimization (memoization, lazy loading)
-3. 📖 State management (Redux, Zustand)
-4. 📖 Testing (Jest, React Testing Library)
-5. 📖 TypeScript integration
-
----
-
 ## � Documentation
 
 ### 📖 Detailed Guides
