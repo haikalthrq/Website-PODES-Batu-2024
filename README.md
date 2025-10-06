@@ -116,7 +116,7 @@ npm run dev  # Vite dev server runs on http://localhost:3000
 
 ---
 
-## 💡 Untuk Programmer Junior
+## 💡 Untuk Programmer
 
 ### 📚 Konsep yang Dipelajari di Project Ini
 
