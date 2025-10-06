@@ -4,7 +4,6 @@
 
 Aplikasi web modern berbasis **React + Vite** (frontend) dan **Express.js** (backend) untuk menganalisis dan memvisualisasikan data desa di Kota Batu dengan berbagai indikator kategori.
 
-![Dashboard Preview](docs/images/dashboard-preview.png)
 
 ## ✨ Fitur Utama
 
@@ -67,7 +66,7 @@ npm --version
 ### 1️⃣ Clone & Setup
 ```bash
 # Clone repository
-git clone <repository-url>
+git clone <(https://github.com/haikalthrq/Website-PODES-Batu-2024.git)>
 cd podes_batu_webapp
 
 # Install dependencies untuk semua parts
