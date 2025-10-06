@@ -1,0 +1,191 @@
+/* Chart Visibility Fixes */
+
+/* Ensure ApexCharts containers are properly sized and visible */
+.apexcharts-canvas,
+.apexcharts-svg {
+  overflow: visible !important;
+  width: 100% !important;
+  max-height: 500px !important; /* Prevent excessive height */
+}
+
+/* Fix ApexCharts container height */
+.apexcharts-canvas svg {
+  max-height: 500px !important;
+}
+
+/* Fix for invisible chart elements */
+.apexcharts-series path,
+.apexcharts-pie-series path,
+.apexcharts-bar-series path {
+  fill-opacity: 0.95 !important;
+  stroke-opacity: 1 !important;
+}
+
+/* Ensure donut/pie chart segments are visible */
+.apexcharts-pie-slice {
+  fill-opacity: 0.95 !important;
+  stroke-width: 2px !important;
+  stroke: #ffffff !important;
+}
+
+/* Bar chart visibility fixes */
+.apexcharts-bar-area {
+  fill-opacity: 0.95 !important;
+}
+
+/* Chart container styling */
+.viz-pane {
+  min-height: 320px;
+  max-height: 500px; /* Prevent excessive height */
+  height: auto;
+  display: block;
+  width: 100%;
+  position: relative;
+  overflow: hidden; /* Prevent content overflow */
+}
+
+/* Legend positioning fixes */
+.apexcharts-legend.apx-legend-position-right {
+  justify-content: flex-start !important;
+  max-width: 150px;
+  overflow: hidden;
+}
+
+.apexcharts-legend-series {
+  display: flex !important;
+  align-items: center !important;
+  margin: 2px 0 !important;
+}
+
+/* Responsive legend on small screens */
+@media (max-width: 768px) {
+  .apexcharts-legend.apx-legend-position-right {
+    position: static !important;
+    max-width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+.viz-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.viz-card .MuiCardContent-root {
+  padding: 16px;
+}
+
+/* Responsive chart containers */
+.apexcharts-responsive {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Fix for legend visibility */
+.apexcharts-legend {
+  position: relative !important;
+}
+
+.apexcharts-legend-text {
+  fill: #1f2937 !important;
+  font-size: 12px !important;
+}
+
+/* Data labels visibility */
+.apexcharts-datalabel,
+.apexcharts-datalabel-label,
+.apexcharts-datalabel-value {
+  fill: #1f2937 !important;
+  font-weight: 600 !important;
+}
+
+/* Tooltip styling */
+.apexcharts-tooltip {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.apexcharts-tooltip-title {
+  background: #f9fafb !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  color: #1f2937 !important;
+}
+
+.apexcharts-tooltip-text {
+  color: #1f2937 !important;
+}
+
+/* Animation optimization */
+.apexcharts-inner {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Grid lines visibility */
+.apexcharts-gridlines-horizontal line,
+.apexcharts-gridlines-vertical line {
+  stroke: #e5e7eb !important;
+  stroke-opacity: 0.5 !important;
+}
+
+/* Axis styling */
+.apexcharts-xaxis-texts-g text,
+.apexcharts-yaxis-texts-g text {
+  fill: #6b7280 !important;
+  font-size: 12px !important;
+}
+
+/* Loading state styling */
+.chart-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 14px;
+  min-height: 320px;
+  background: #f9fafb;
+  border-radius: 6px;
+  border: 2px dashed #d1d5db;
+}
+
+/* Chart error state */
+.chart-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  font-size: 14px;
+  min-height: 320px;
+  background: #fef2f2;
+  border-radius: 6px;
+  border: 2px dashed #fca5a5;
+}
+
+/* Accordion specific fixes */
+.MuiAccordionDetails-root .viz-pane {
+  margin-top: 8px;
+}
+
+/* Ensure charts render properly in accordion */
+.MuiAccordion-root.Mui-expanded .apexcharts-canvas {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Fix for small screen devices */
+@media (max-width: 640px) {
+  .viz-pane {
+    min-height: 280px;
+  }
+  
+  .apexcharts-legend {
+    position: static !important;
+    justify-content: center;
+  }
+  
+  .apexcharts-legend-series {
+    margin: 2px 5px !important;
+  }
+}

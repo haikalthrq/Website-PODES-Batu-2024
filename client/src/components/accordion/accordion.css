@@ -1,0 +1,95 @@
+/* Enhanced Accordion Styles - Complementing Material-UI components */
+
+.enhanced-accordion {
+  /* Container spacing */
+  --accordion-gap: 16px;
+}
+
+.accordion-item {
+  /* Smooth transitions for all accordion items */
+  transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.accordion-item:hover {
+  transform: translateY(-1px);
+}
+
+.accordion-item:active {
+  transform: translateY(0px);
+}
+
+.accordion-header-button {
+  /* Ensure proper button behavior */
+  position: relative;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.accordion-header-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Focus management */
+.accordion-header-button:focus-visible {
+  outline: 2px solid var(--mui-palette-primary-main, #1976d2);
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .enhanced-accordion *,
+  .accordion-item *,
+  .accordion-header-button * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  
+  .accordion-item {
+    transform: none !important;
+  }
+  
+  .accordion-item:hover {
+    transform: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .accordion-item {
+    border-width: 2px;
+  }
+  
+  .accordion-header-button:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* Touch device optimizations */
+@media (pointer: coarse) {
+  .accordion-header-button {
+    min-height: 48px; /* WCAG touch target size */
+  }
+}
+
+/* Print styles */
+@media print {
+  .enhanced-accordion {
+    break-inside: avoid;
+  }
+  
+  .accordion-item {
+    break-inside: avoid;
+  }
+}
