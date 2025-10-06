@@ -143,7 +143,7 @@ const AnalysisPage = ({ setCurrentPage }) => {
       setData(Array.isArray(allVillages) ? allVillages : []);
       setMetadata(meta);
     } catch (err) {
-      setError('Gagal memuat data. Pastikan server backend berjalan di port 5000.');
+      setError('Gagal memuat data. Pastikan server backend berjalan di port 5001.');
       console.error('AnalysisPage error:', err);
     } finally {
       setLoading(false);
