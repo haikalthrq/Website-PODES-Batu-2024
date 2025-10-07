@@ -161,15 +161,8 @@ npm run dev  # Vite dev server runs on http://localhost:3000
 
 ### 📍 Geographic Coverage
 - **3 Kecamatan**: BATU, BUMIAJI, JUNREJO  
-- **24 Desa/Kelurahan**: Complete coverage of Kota Batu
-- **Data Source**: BPS (Badan Pusat Statistik) Kota Batu 2024
-
-### 📈 Data Categories
-- **Demographics**: Population, households, demographic indicators
-- **Education**: Educational facility counts by level  
-- **Health**: Healthcare facility availability
-- **Infrastructure**: Connectivity, lighting, communication infrastructure
-- **Environment**: Environmental conditions and disaster preparedness
+- **24 Desa/Kelurahan**: Semua desa/kelurahan di Kota Batu
+- **Data Source**: Badan Pusat Statistik Kota Batu 2024
 
 ## 🔐 Keamanan
 
