@@ -268,13 +268,89 @@ export const COMPARISON_CONFIG = {
     key: 'lingkungan',
     title: 'Lingkungan & Kebencanaan',
     icon: '🌿',
+    // Special handling for qualitative (text-based) data - mirrors Infrastructure pattern
+    hasQualitativeData: true,
+    comparisonMode: 'table-only', // Don't show charts, only comparison table
     indicators: [
       {
-        key: 'kayu_bakar',
-        label: 'Keluarga Pengguna Kayu Bakar',
-        dataKey: 'jumlah_keluarga_pengguna_kayu_bakar',
-        accessor: (row) => row.jumlah_keluarga_pengguna_kayu_bakar || 0,
+        key: 'sistem_peringatan_dini',
+        label: 'Sistem Peringatan Dini',
+        dataKey: 'status_peringatan_dini',
+        type: 'qualitative',
+        accessor: (row) => row.status_peringatan_dini || '-',
+        color: CHART_COLORS.red
+      },
+      {
+        key: 'alat_keselamatan',
+        label: 'Alat Keselamatan',
+        dataKey: 'status_alat_keselamatan',
+        type: 'qualitative',
+        accessor: (row) => row.status_alat_keselamatan || '-',
         color: CHART_COLORS.orange
+      },
+      {
+        key: 'rambu_keselamatan',
+        label: 'Rambu Keselamatan',
+        dataKey: 'status_rambu_evakuasi',
+        type: 'qualitative',
+        accessor: (row) => row.status_rambu_evakuasi || '-',
+        color: CHART_COLORS.yellow
+      },
+      {
+        key: 'tempat_pembuangan_sampah',
+        label: 'Tempat Penampungan Sampah (TPS)',
+        dataKey: 'status_tps',
+        type: 'qualitative',
+        accessor: (row) => row.status_tps || '-',
+        color: CHART_COLORS.green
+      },
+      {
+        key: 'tempat_pengelolaan_sampah_3r',
+        label: 'Tempat Penampungan Sampah 3R (TPS3R)',
+        dataKey: 'status_tps3r',
+        type: 'qualitative',
+        accessor: (row) => row.status_tps3r || '-',
+        color: CHART_COLORS.teal
+      },
+      {
+        key: 'pemilahan_sampah',
+        label: 'Pemilahan Sampah',
+        dataKey: 'status_dilakukan_pemilahan_sampah',
+        type: 'qualitative',
+        accessor: (row) => row.status_dilakukan_pemilahan_sampah || '-',
+        color: CHART_COLORS.cyan
+      },
+      {
+        key: 'kebiasaan_pemilahan_sampah',
+        label: 'Kebiasaan Pemilahan Sampah',
+        dataKey: 'kebiasaan_pemilahan_sampah',
+        type: 'qualitative',
+        accessor: (row) => row.kebiasaan_pemilahan_sampah || '-',
+        color: CHART_COLORS.blue
+      },
+      {
+        key: 'partisipasi_warga_pengolahan_sampah',
+        label: 'Partisipasi Warga Pengolahan Sampah',
+        dataKey: 'warga_terlibat_olah_sampah',
+        type: 'qualitative',
+        accessor: (row) => row.warga_terlibat_olah_sampah || '-',
+        color: CHART_COLORS.indigo
+      },
+      {
+        key: 'kebiasaan_bakar_lahan',
+        label: 'Kebiasaan Bakar Lahan',
+        dataKey: 'kebiasaan_bakar_lahan',
+        type: 'qualitative',
+        accessor: (row) => row.kebiasaan_bakar_lahan || '-',
+        color: CHART_COLORS.purple
+      },
+      {
+        key: 'pencemaran_air_pabrik',
+        label: 'Pencemaran Air dari Pabrik',
+        dataKey: 'sumber_pencemaran_air_dari_pabrik',
+        type: 'qualitative',
+        accessor: (row) => row.sumber_pencemaran_air_dari_pabrik || '-',
+        color: CHART_COLORS.pink
       }
     ]
   }

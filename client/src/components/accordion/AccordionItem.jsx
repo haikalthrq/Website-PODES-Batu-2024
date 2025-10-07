@@ -105,9 +105,13 @@ const AccordionItem = ({
         border: `1px solid ${isOpen ? theme.palette.primary.light : theme.palette.divider}`,
         backgroundColor: theme.palette.background.paper,
         boxShadow: isOpen ? theme.shadows[2] : theme.shadows[1],
-        transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+        // Only transition border color, not all properties
+        transition: 'border-color 150ms ease-out',
         position: 'relative',
         overflow: 'hidden',
+        // Hardware acceleration for smoother animations
+        transform: 'translateZ(0)',
+        willChange: 'border-color',
         
         // Open state accent
         ...(isOpen && {
@@ -192,7 +196,9 @@ const AccordionItem = ({
               cursor: 'not-allowed'
             }),
 
-            transition: 'background-color 150ms cubic-bezier(0.4, 0, 0.2, 1)',
+            transition: 'background-color 120ms ease-out',
+            // Hardware acceleration
+            transform: 'translateZ(0)',
             
             '@media (prefers-reduced-motion: reduce)': {
               transition: 'none'
@@ -254,8 +260,13 @@ const AccordionItem = ({
               alignItems: 'center',
               justifyContent: 'center',
               color: theme.palette.text.secondary,
-              transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+              // Only transition transform for smoother animation
+              transition: 'transform 180ms ease-out',
               transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              // Hardware acceleration
+              willChange: 'transform',
+              transformStyle: 'preserve-3d',
+              backfaceVisibility: 'hidden',
               
               '@media (prefers-reduced-motion: reduce)': {
                 transition: 'none',
@@ -296,12 +307,12 @@ const AccordionItem = ({
       <Collapse
         in={isOpen}
         timeout={{
-          enter: 250,
-          exit: 200
+          enter: 200,
+          exit: 150
         }}
         easing={{
-          enter: 'cubic-bezier(0.4, 0, 0.2, 1)',
-          exit: 'cubic-bezier(0.4, 0, 0.6, 1)'
+          enter: 'cubic-bezier(0.4, 0, 0.6, 1)',
+          exit: 'cubic-bezier(0.4, 0, 1, 1)'
         }}
         onEntered={handleEntered}
         onEntering={handleEntering}
@@ -320,11 +331,12 @@ const AccordionItem = ({
             pt: 2,
             backgroundColor: theme.palette.background.paper,
             borderTop: `1px solid ${theme.palette.divider}`,
-            opacity: isAnimating ? 0.7 : 1,
-            transition: 'opacity 150ms ease-in-out',
+            // Remove opacity transition - causes janky animation
+            // Hardware acceleration
+            transform: 'translateZ(0)',
+            willChange: isAnimating ? 'height' : 'auto',
             
             '@media (prefers-reduced-motion: reduce)': {
-              opacity: 1,
               transition: 'none'
             }
           }}

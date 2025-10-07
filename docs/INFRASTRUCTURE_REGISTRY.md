@@ -10,16 +10,34 @@ Membuat sistem **single source of truth** untuk konfigurasi indikator infrastruk
 - ✅ **Reusability**: Component yang sama digunakan berulang kali
 - ✅ **Scalability**: Mudah menambah indikator baru
 
+**Note**: Pola serupa juga diterapkan untuk kategori Lingkungan & Kebencanaan. Lihat [Environment Registry](ENVIRONMENT_REGISTRY.md) untuk dokumentasi lengkap.
+
 ## 📁 File Structure
 
 ```
 src/config/infra/
 ├── 📄 indicatorRegistry.js     # Main registry configuration
-└── 📄 README.md               # This documentation
+└── 📄 README.md               # Documentation
+
+src/config/
+└── 📄 categories.config.js     # Comparison mode configuration
 
 src/components/
 ├── 📄 InfrastructureIndicatorContent.jsx    # Container component
-└── 📄 EnhancedInfrastructureIndicators.jsx  # Chart rendering component
+├── 📄 EnhancedInfrastructureIndicators.jsx  # Chart rendering component
+└── 📄 ComparisonView.jsx                    # Comparison mode component
+```
+
+**Related Files for Environment Category**:
+```
+src/config/
+└── 📄 environmentIndicatorConfig.js  # Environment registry
+
+src/components/environment/
+└── 📄 EnvironmentIndicatorShell.jsx  # Environment visualization
+
+src/adapters/
+└── 📄 environmentDataAdapter.js      # Data transformation
 ```
 
 ## 💻 Registry Configuration

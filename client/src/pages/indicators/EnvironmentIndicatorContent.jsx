@@ -2,13 +2,15 @@ import React, { useMemo } from 'react';
 import { Box, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
 import ENV_CONFIG from '../../config/environmentIndicatorConfig';
-import KEY_MAP from '../../config/indicatorKeyMap';
 import EnvironmentIndicatorShell from '../../components/environment/EnvironmentIndicatorShell';
 import { INDICATOR_ALL } from '../../constants';
 
 /**
- * Lightweight page wrapper for Environment indicators
- * Replaces heavy EnvironmentIndicatorContent with thin glue logic
+ * Universal, reusable visualization component for Environment category
+ * Handles both "Semua" (all indicators) and single indicator modes
+ * Reuses the exact same visualization stack (EnvironmentIndicatorShell) for consistency
+ * 
+ * Pattern mirrors Infrastructure & Konektivitas implementation
  */
 export default function EnvironmentIndicatorContent({
   filters = {},
@@ -22,8 +24,7 @@ export default function EnvironmentIndicatorContent({
       // Return all indicators for accordion mode
       return Object.entries(ENV_CONFIG).map(([key, config]) => ({
         key,
-        config,
-        dataKey: KEY_MAP[key] || key
+        config
       }));
     } else {
       // Return single indicator
@@ -32,8 +33,7 @@ export default function EnvironmentIndicatorContent({
       
       return [{
         key: selectedIndicator,
-        config,
-        dataKey: KEY_MAP[selectedIndicator] || selectedIndicator
+        config
       }];
     }
   }, [selectedIndicator]);
@@ -58,67 +58,78 @@ export default function EnvironmentIndicatorContent({
     );
   }
 
-  // Mode: Single indicator (expanded by default)
+  // Mode: Single indicator (direct render without extra accordion wrapper)
+  // Matches Infrastructure pattern - reuse the exact same visualization components
   if (selectedIndicator !== INDICATOR_ALL) {
     const { key, config } = indicatorConfigs[0];
     
     return (
-      <Box sx={{ mb: 4 }}>
-        <Accordion defaultExpanded sx={{ boxShadow: 2 }}>
-          <AccordionSummary 
-            expandIcon={<ExpandMore />}
-            sx={{ 
-              backgroundColor: 'primary.50',
-              '&:hover': { backgroundColor: 'primary.100' }
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                {config.icon} {config.title}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                - Klik untuk menutup
-              </Typography>
-            </Box>
-          </AccordionSummary>
-          <AccordionDetails sx={{ p: 3 }}>
-            <EnvironmentIndicatorShell
-              indicatorKey={key}
-              villageData={villageData}
-              config={config}
-              isOpen={true}
-            />
-          </AccordionDetails>
-        </Accordion>
+      <Box sx={{ mb: 2 }}>
+        {/* Reuse the exact same EnvironmentIndicatorShell that powers "Semua" accordions */}
+        <EnvironmentIndicatorShell
+          indicatorKey={key}
+          villageData={villageData}
+          config={config}
+          isOpen={true}
+        />
       </Box>
     );
   }
 
-  // Mode: All indicators (closed by default)
+  // Mode: All indicators (accordion mode - matches "Semua" behavior)
   return (
     <Box sx={{ mb: 4 }}>
-      <Typography variant="h5" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
+      <Typography 
+        variant="h5" 
+        gutterBottom 
+        sx={{ 
+          mb: 3, 
+          fontWeight: 600,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1
+        }}
+      >
         🌍 Ringkasan Seluruh Indikator Lingkungan & Kebencanaan
       </Typography>
       
       {indicatorConfigs.map(({ key, config }) => (
-        <Accordion key={key} sx={{ mb: 2, boxShadow: 1 }}>
+        <Accordion 
+          key={key} 
+          sx={{ 
+            mb: 2, 
+            boxShadow: 1,
+            // Performance optimization
+            transform: 'translateZ(0)',
+            willChange: 'auto'
+          }}
+        >
           <AccordionSummary 
             expandIcon={<ExpandMore />}
             sx={{ 
-              '&:hover': { backgroundColor: 'action.hover' }
+              '&:hover': { backgroundColor: 'action.hover' },
+              minHeight: 64
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                {config.icon} {config.title}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Typography 
+                component="span" 
+                sx={{ fontSize: '1.5rem', lineHeight: 1 }}
+              >
+                {config.icon}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                - Klik untuk membuka
-              </Typography>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 600, lineHeight: 1.3 }}>
+                  {config.title}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+                  Klik untuk melihat visualisasi lengkap
+                </Typography>
+              </Box>
             </Box>
           </AccordionSummary>
-          <AccordionDetails sx={{ p: 3 }}>
+          <AccordionDetails sx={{ p: 3, bgcolor: 'background.default' }}>
+            {/* Reuse exact same visualization component for consistency */}
             <EnvironmentIndicatorShell
               indicatorKey={key}
               villageData={villageData}

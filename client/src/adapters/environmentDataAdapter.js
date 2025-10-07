@@ -9,7 +9,7 @@ import { getEnvColor } from '../theme/environmentPalette';
 export function buildStats(rows, cfg) {
   const safeRows = Array.isArray(rows) ? rows : [];
   
-  if (safeRows.length === 0) {
+  if (safeRows.length === 0 || !cfg || !cfg.valueKey) {
     return {
       dominantLabel: '-',
       percentDominant: 0,
@@ -55,7 +55,7 @@ export function buildStats(rows, cfg) {
 export function buildCharts(rows, cfg) {
   const safeRows = Array.isArray(rows) ? rows : [];
   
-  if (safeRows.length === 0) {
+  if (safeRows.length === 0 || !cfg || !cfg.chartsPlan || !Array.isArray(cfg.chartsPlan)) {
     return [];
   }
 
@@ -83,7 +83,8 @@ export function buildCharts(rows, cfg) {
     charts.push({
       type: 'donut',
       title: `Distribusi ${cfg.title}`,
-      data: donutData
+      data: donutData,
+      colors: sortedEntries.map((_, index) => getEnvColor(index))
     });
   }
 
@@ -98,8 +99,11 @@ export function buildCharts(rows, cfg) {
     charts.push({
       type: 'bar',
       title: `Ranking ${cfg.title}`,
-      labels: labels,
-      yData: values
+      data: {
+        labels: labels,
+        values: values
+      },
+      colors: sortedEntries.map((_, index) => getEnvColor(index))
     });
   }
 
@@ -132,9 +136,11 @@ export function buildCharts(rows, cfg) {
     charts.push({
       type: 'stackedBar',
       title: `Distribusi per Kecamatan`,
-      groups: kecamatanNames,
-      categories: categories,
-      series: series
+      data: {
+        categories: kecamatanNames,
+        series: series
+      },
+      colors: categories.map((_, index) => getEnvColor(index))
     });
   }
 
@@ -143,6 +149,13 @@ export function buildCharts(rows, cfg) {
 
 export function buildDetailTable(rows, cfg) {
   const safeRows = Array.isArray(rows) ? rows : [];
+  
+  if (!cfg || !cfg.valueKey || !cfg.title) {
+    return {
+      headers: [],
+      rows: []
+    };
+  }
   
   const headers = [
     { key: 'nama_desa', label: 'Nama Desa' },

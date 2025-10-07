@@ -88,6 +88,52 @@ import { IndicatorPanel } from '../analysis/IndicatorPanel';
 
 ---
 
+### UniversalIndicatorPanel
+**Universal panel yang support multiple categories**
+
+```jsx
+import { UniversalIndicatorPanel } from '../analysis/universal/UniversalIndicatorPanel';
+
+<UniversalIndicatorPanel
+  category="lingkungan"
+  indicator="status_rambu_evakuasi"
+  config={indicatorConfig}
+  villageData={data}
+/>
+```
+
+**Features:**
+- Support Infrastructure & Environment categories
+- Automatic component routing
+- Registry-based configuration
+- Unified rendering pattern
+
+---
+
+### useComparisonData Hook
+**Custom hook untuk comparison mode**
+
+```jsx
+import { useComparisonData } from '../hooks/useComparisonData';
+
+const ComparisonView = ({ category, indicators }) => {
+  const { data, loading, error } = useComparisonData(category, indicators);
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorState />;
+
+  return <ComparisonTable data={data} />;
+};
+```
+
+**Features:**
+- Fetches comparison data for multiple indicators
+- Handles loading and error states
+- Memoized data processing
+- Support for qualitative and quantitative data
+
+---
+
 ## 📈 Chart Integration
 
 ### Chart Data Transformation
@@ -100,6 +146,31 @@ const donutData = transformForDonut(villageData, 'field_name', categories);
 // Transform untuk bar chart
 const barData = transformForBar(villageData, 'field_name', 'kecamatan');
 ```
+
+### Environment Data Adapter
+```javascript
+import { environmentDataAdapter } from '../adapters/environmentDataAdapter';
+
+// Process indicator data
+const processedData = environmentDataAdapter.processIndicatorData(
+  villageData,
+  'status_rambu_evakuasi',
+  ['Ada', 'Tidak Ada']
+);
+
+// Process stacked data (per kecamatan)
+const stackedData = environmentDataAdapter.processStackedData(
+  villageData,
+  'status_rambu_evakuasi',
+  ['Ada', 'Tidak Ada']
+);
+```
+
+**Features:**
+- Separation of concerns (data vs visualization)
+- Reusable transformation logic
+- Optimized performance
+- Type-safe data handling
 
 ### Chart Utilities
 ```javascript

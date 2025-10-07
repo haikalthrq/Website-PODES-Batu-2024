@@ -39,13 +39,20 @@ Aplikasi web modern berbasis **React + Vite** (frontend) dan **Express.js** (bac
 │   │   ├── 📁 components/     # Reusable React components
 │   │   │   ├── 📁 charts/     # Chart components (ApexCharts)
 │   │   │   ├── 📁 common/     # Shared UI components
-│   │   │   └── 📁 theme/      # Color schemes & styling
+│   │   │   ├── 📁 environment/  # Environment category components
+│   │   │   ├── 📁 theme/      # Color schemes & styling
+│   │   │   └── 📁 unified/    # Universal components
 │   │   ├── 📁 analysis/       # Analysis components & logic
-│   │   ├── 📁 config/         # Configuration & registries
-│   │   │   └── 📁 infra/      # Infrastructure indicator registry
+│   │   ├── 📁 config/         # Configuration & registries (single source)
+│   │   │   ├── 📁 infra/      # Infrastructure indicator registry
+│   │   │   ├── 📁 indicators/ # Indicator configurations
+│   │   │   ├── 📁 table/      # Table configurations
+│   │   │   ├── categories.config.js  # Category & comparison configs
+│   │   │   └── environmentIndicatorConfig.js  # Environment registry
 │   │   ├── 📁 pages/          # Main application pages
 │   │   ├── 📁 services/       # API communication layer  
 │   │   ├── 📁 utils/          # Helper functions & utilities
+│   │   ├── 📁 adapters/       # Data adapters for processing
 │   │   └── 📄 main.jsx        # App entry point
 │   ├── 📁 public/             # Static assets
 │   └── 📄 package.json        # Frontend dependencies
@@ -100,14 +107,16 @@ npm run dev  # Vite dev server runs on http://localhost:3000
 ### Frontend (Client)
 - **⚛️ React 18** - Modern UI library dengan hooks
 - **⚡ Vite** - Super fast build tool (lebih cepat dari Create React App)
-- **🎨 Material-UI (MUI)** - Pre-built beautiful components
-- **📊 ApexCharts** - Interactive chart library
+- **🎨 Material-UI (MUI) v5** - Pre-built beautiful components dengan Grid v2
+- **📊 ApexCharts** - Interactive chart library (replaced ECharts for better performance)
 - **🛣️ React Router** - Single Page Application routing
+- **🎯 Registry Pattern** - Centralized configuration system
 
 ### Backend (Server)  
 - **🚀 Express.js** - Minimalist web framework untuk Node.js
 - **📄 File-based storage** - Data disimpan dalam format JSON
 - **🔒 CORS & Helmet** - Security middleware
+- **📊 RESTful API** - Clean data transformation layer
 
 ### Development Tools
 - **📦 npm** - Package manager
@@ -125,23 +134,26 @@ npm run dev  # Vite dev server runs on http://localhost:3000
 - **[📡 API Documentation](docs/API.md)** - Backend API endpoints & schemas
 
 ### 🔧 Technical Documentation
-- **[🏗️ Infrastructure Registry](docs/INFRASTRUCTURE_REGISTRY.md)** - Registry pattern implementation
+- **[🏗️ Infrastructure Registry](docs/INFRASTRUCTURE_REGISTRY.md)** - Infrastructure category registry pattern
+- **[🌿 Environment Registry](docs/ENVIRONMENT_REGISTRY.md)** - Environment category registry pattern
 - **[🎨 Component Library](client/src/components/README.md)** - Reusable component documentation
-- **[📊 Chart Components](client/src/components/charts/README.md)** - Chart wrapper documentation
+- **[📊 Analysis Guide](client/src/analysis/COMPONENT_GUIDE.md)** - Analysis module documentation
 
 ### 🎯 Key Features
 
 #### 🏘️ Multi-Category Analysis
 - **Pendidikan**: TK, SD, SMP, SMA facilities per village
 - **Kesehatan**: Puskesmas, Rumah Sakit health facilities  
-- **Infrastruktur & Konektivitas**: Signal quality, internet access, lighting infrastructure
-- **Lingkungan & Kebencanaan**: Environmental & disaster management data
+- **Infrastruktur & Konektivitas**: Signal quality, internet access, lighting infrastructure (10 indicators)
+- **Lingkungan & Kebencanaan**: Environmental & disaster management data (10 indicators with comparison mode)
 
 #### 📊 Interactive Visualizations
-- **Donut Charts**: Category distribution with percentages
+- **Donut Charts**: Category distribution with percentages (ApexCharts)
 - **Stacked Bar Charts**: Multi-category comparison by district (kecamatan)
-- **KPI Cards**: Key statistics and summary metrics
-- **Data Tables**: Detailed village information with sorting/filtering
+- **Horizontal Bar Charts**: Ranking and comparison visualizations
+- **KPI Cards**: Key statistics and summary metrics with icons
+- **Data Tables**: Detailed village information with sorting/filtering (Material-UI TableSortLabel)
+- **Comparison Tables**: Side-by-side village comparison mode
 
 #### 🎛️ Dynamic Filtering
 - **Category Filter**: Switch between data categories
@@ -150,10 +162,13 @@ npm run dev  # Vite dev server runs on http://localhost:3000
 - **Real-time Updates**: Charts and statistics update instantly
 
 #### 🏗️ Technical Architecture
-- **Registry Pattern**: Centralized configuration for indicator definitions
-- **Component Reusability**: Same visualization components for different modes
-- **Performance Optimization**: Memoization, lazy loading, conditional rendering
+- **Registry Pattern**: Centralized configuration for indicator definitions (Infrastructure & Environment)
+- **Universal Components**: Same visualization components for different categories and modes
+- **Component Reusability**: Unified rendering pattern across all indicators
+- **Performance Optimization**: Memoization, lazy loading, conditional rendering, GPU-accelerated animations
 - **Error Boundaries**: Graceful error handling and user feedback
+- **Responsive Design**: Mobile-first approach with Material-UI Grid v2
+- **Data Adapters**: Clean separation between data transformation and visualization
 
 ---
 

@@ -1,48 +1,34 @@
 import React from 'react';
-import EnhancedEnvironmentIndicators from './EnhancedEnvironmentIndicators';
-import { LINGKUNGAN_KEBENCANAAN_INDICATORS } from '../config/indicators/lingkungan_kebencanaan';
+import EnvironmentIndicatorShell from './environment/EnvironmentIndicatorShell';
+import ENV_CONFIG from '../config/environmentIndicatorConfig';
 
 /**
  * Environment Indicator Content Component
- * Maps indicator keys to the enhanced visualization component
- * Follows the same pattern as InfrastructureIndicatorContent
+ * Maps indicator keys to the EnvironmentIndicatorShell with ApexCharts
+ * Updated to use the new unified approach
  */
 const EnvironmentIndicatorContent = ({ 
   indicatorKey, 
-  data, 
+  villageData,  // Changed from 'data' to 'villageData' for consistency
   config = {}, 
   isOpen = false 
 }) => {
-  // Debug logging
-  console.log('EnvironmentIndicatorContent:', {
-    indicatorKey,
-    config,
-    data,
-    dataLength: data?.length || 0
-  });
-
-  // Find the indicator configuration
-  const indicatorConfig = LINGKUNGAN_KEBENCANAAN_INDICATORS.find(
-    indicator => indicator.key === indicatorKey || indicator.dataKey === indicatorKey
-  );
+  // Get config from environmentIndicatorConfig
+  const indicatorConfig = ENV_CONFIG[indicatorKey] || config;
 
   if (!indicatorConfig) {
     console.warn(`No configuration found for indicator: ${indicatorKey}`);
     return null;
   }
 
-  // Get the actual data key to use
-  const actualDataKey = indicatorConfig.dataKey;
-  const displayName = indicatorConfig.label;
-
   // Use the data directly (it should already be the village array)
-  const rawVillageData = data || [];
+  const rawVillageData = villageData || [];
 
   return (
-    <EnhancedEnvironmentIndicators
-      indicatorKey={actualDataKey}
-      displayName={displayName}
-      rawVillageData={rawVillageData}
+    <EnvironmentIndicatorShell
+      indicatorKey={indicatorKey}
+      villageData={rawVillageData}
+      config={indicatorConfig}
       isOpen={isOpen}
     />
   );
