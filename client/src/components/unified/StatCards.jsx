@@ -3,9 +3,9 @@ import { Box, Card, CardContent, Typography, Grid } from '@mui/material';
 import { 
   TrendingUp, 
   PieChart as PieChartIcon, 
-  BarChart3, 
-  Users, 
-  Database 
+  BarChart, 
+  People, 
+  Storage 
 } from '@mui/icons-material';
 
 /**
@@ -43,21 +43,21 @@ export default function StatCards({ stats = {} }) {
       key: 'totalKategori',
       title: 'Total Kategori',
       value: formatNumber(stats.totalKategori),
-      icon: <BarChart3 />,
+      icon: <BarChart />,
       color: '#8b5cf6'
     },
     {
       key: 'totalDesa',
       title: 'Total Desa',
       value: formatNumber(stats.totalDesa),
-      icon: <Users />,
+      icon: <People />,
       color: '#f59e0b'
     },
     {
       key: 'desaDenganData',
       title: 'Desa dengan Data',
       value: formatNumber(stats.desaDenganData),
-      icon: <Database />,
+      icon: <Storage />,
       color: '#06b6d4'
     }
   ];

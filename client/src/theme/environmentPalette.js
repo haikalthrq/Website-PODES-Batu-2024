@@ -108,4 +108,27 @@ export const getCategoryColor = (indicatorKey, categoryValue) => {
   return palette[normalizedValue] || palette['Tidak Terdefinisi'] || '#95a5a6';
 };
 
+/**
+ * Color series for charts (when using index-based coloring)
+ */
+const ENV_COLOR_SERIES = [
+  '#2ecc71', // green
+  '#3498db', // blue
+  '#f1c40f', // yellow
+  '#e67e22', // orange
+  '#9b59b6', // purple
+  '#1abc9c', // teal
+  '#95a5a6'  // grey
+];
+
+/**
+ * Get color by index for generic charts
+ * Used by the adapter when building chart data
+ * @param {number} index - The index in the color array
+ * @returns {string} Hex color code
+ */
+export const getEnvColor = (index) => {
+  return ENV_COLOR_SERIES[index % ENV_COLOR_SERIES.length];
+};
+
 export default ENVIRONMENT_PALETTES;

@@ -45,23 +45,36 @@ components/
 │   ├── EmptyState.jsx
 │   ├── LoadingSpinner.jsx
 │   └── StatCard.jsx
+├── 📁 environment/         # Environment category components
+│   └── EnvironmentIndicatorShell.jsx
+├── 📁 unified/             # Universal reusable components
+│   └── UniversalIndicatorPanel.jsx
 ├── 📁 theme/               # Styling & colors
 │   ├── chartColors.ts
 │   └── palette.js
-└── 📄 InfrastructureIndicatorContent.jsx  # Domain-specific containers
+├── 📄 InfrastructureIndicatorContent.jsx    # Infrastructure container
+├── 📄 EnvironmentIndicatorContent.jsx       # Environment container
+└── 📄 ComparisonView.jsx                    # Comparison mode component
 ```
 
 ### 🔧 `/src/config/`
-**Configuration & registries**
+**Configuration & registries (single source of truth)**
 
 ```
 config/
 ├── 📁 infra/               # Infrastructure-specific config
 │   └── indicatorRegistry.js
+├── 📁 indicators/          # Indicator configurations
+│   └── [various indicator configs]
+├── 📁 table/               # Table configurations
+│   └── tableConfig.js
 ├── 📁 selectors/           # Data selection logic
 │   └── getIndicatorsForCategory.js
-└── 📄 categories.config.js  # Category definitions
+├── 📄 categories.config.js           # Category & comparison definitions
+└── 📄 environmentIndicatorConfig.js  # Environment indicator registry
 ```
+
+**Note**: Previously had redundant `configs/` folder - now consolidated into single `config/` folder.
 
 ### 📊 `/src/analysis/`
 **Analysis & visualization logic**
@@ -72,6 +85,9 @@ analysis/
 │   └── SummaryAccordionSection.jsx
 ├── 📁 universal/           # Universal analysis components
 │   └── UniversalIndicatorPanel.jsx
+├── 📁 charts/              # Chart-specific components
+├── 📁 tables/              # Table components with sorting
+├── 📁 hooks/               # Custom hooks (useComparisonData, etc.)
 └── 📄 IndicatorsSummary.jsx
 ```
 
@@ -82,7 +98,16 @@ analysis/
 utils/
 ├── 📁 infra/               # Infrastructure-specific utilities
 │   └── distribution.ts
-└── 📄 formatters.js        # Data formatting helpers
+├── 📄 formatters.js        # Data formatting helpers
+└── 📄 dataProcessing.js    # Generic data processing utilities
+```
+
+### 🔌 `/src/adapters/`
+**Data transformation adapters**
+
+```
+adapters/
+└── 📄 environmentDataAdapter.js  # Environment data transformation
 ```
 
 ## 🔄 Data Flow Patterns
@@ -110,10 +135,15 @@ useEffect(() => {
 ```
 
 ```javascript
-// Example: Infrastructure indicator flow
+// Example 1: Infrastructure indicator flow
 const selectedIndicator = 'penerangan_jalan_utama';
 const config = getIndicatorConfig(selectedIndicator);  // Registry lookup
 // Config contains: dataKey, categories, charts, colors, etc.
+
+// Example 2: Environment indicator flow
+import { environmentIndicators } from '../config/environmentIndicatorConfig';
+const config = environmentIndicators[selectedIndicator];
+// Config contains: title, valueKey, categories, chartTypes, etc.
 ```
 
 ### 3. **Filter Flow**
@@ -243,6 +273,61 @@ const AnalysisPage = lazy(() => import('./pages/AnalysisPage'));
 {shouldRenderCharts && (
   <ExpensiveChartComponent data={data} />
 )}
+```
+
+### 4. **GPU-Accelerated Animations**
+```css
+/* Optimized accordion animations */
+.accordion-content {
+  will-change: transform;
+  transform: translateZ(0);
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+```
+
+## 📊 Comparison Mode Architecture
+
+### Comparison Flow
+```
+👤 User clicks "Perbandingan Antar Desa"
+        ↓
+🔍 categories.config.js COMPARISON_CONFIG lookup
+        ↓
+🎯 ComparisonView component renders
+        ↓
+🔄 useComparisonData hook fetches data
+        ↓
+📋 Comparison table with 5 villages × N indicators
+```
+
+### Comparison Configuration
+```javascript
+// categories.config.js
+export const COMPARISON_CONFIG = {
+  lingkungan: {
+    title: "Lingkungan & Kebencanaan",
+    indicators: [
+      { key: 'status_rambu_evakuasi', label: 'Rambu Evakuasi', accessor: 'status_rambu_evakuasi' },
+      { key: 'status_tps', label: 'TPS', accessor: 'status_tps' },
+      // ... more indicators
+    ],
+    hasQualitativeData: true,
+    comparisonMode: 'table-only'
+  }
+};
+```
+
+### Universal Component Pattern
+```javascript
+// UniversalIndicatorPanel.jsx - Works for all categories
+const UniversalIndicatorPanel = ({ category, indicator, config }) => {
+  // Adapts to Infrastructure or Environment
+  if (category === 'infrastruktur') {
+    return <InfrastructureIndicatorContent {...props} />;
+  } else if (category === 'lingkungan') {
+    return <EnvironmentIndicatorContent {...props} />;
+  }
+};
 ```
 
 ## 🚀 State Management Strategy

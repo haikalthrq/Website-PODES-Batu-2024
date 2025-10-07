@@ -118,7 +118,7 @@ const SummaryAccordionSection = ({
               /* For Environment category, use enhanced visualizations */
               <EnvironmentIndicatorContent 
                 indicatorKey={indicator.key}
-                data={dataToUse}
+                villageData={dataToUse}
               />
             ) : (
               /* For other new categories, show placeholder */

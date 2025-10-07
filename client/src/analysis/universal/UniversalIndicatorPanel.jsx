@@ -8,6 +8,8 @@ import { formatAnalysisTitle } from './titleUtils';
 // Special imports for Infrastructure category
 import InfrastructureIndicatorContent from '../../components/InfrastructureIndicatorContent';
 import { getIndicatorConfig } from '../../config/infra/indicatorRegistry';
+// Special imports for Environment category
+import EnvironmentIndicatorContent from '../../pages/indicators/EnvironmentIndicatorContent';
 
 /**
  * Universal component that works for BOTH "Semua Indikator" accordions AND specific indicator views
@@ -52,6 +54,18 @@ const UniversalIndicatorPanel = ({
       console.warn('Infrastructure indicator config not found:', indicatorKey);
       return <div>Infrastructure indicator config not found: {indicatorKey}</div>;
     }
+  }
+
+  // Special handling for Environment category - reuse universal visualization stack
+  if (categoryKey === 'lingkungan & kebencanaan' || categoryKey === 'lingkungan' || categoryKey.toLowerCase().includes('lingkungan')) {
+    console.log('🌍 UniversalIndicatorPanel: Using Environment universal visualizations for:', indicatorKey);
+    
+    return (
+      <EnvironmentIndicatorContent
+        filters={{ indicator: indicatorKey }}
+        villageData={dataset}
+      />
+    );
   }
 
   // Get category configuration for other categories

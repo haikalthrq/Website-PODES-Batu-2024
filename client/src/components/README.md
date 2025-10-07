@@ -214,9 +214,10 @@ import InfrastructureIndicatorContent from '../components/InfrastructureIndicato
 ```
 
 **Features:**
-- Registry-based configuration
+- Registry-based configuration (config/infra/indicatorRegistry.js)
 - Automatic chart type selection
 - Reusable untuk semua infrastructure indicators
+- 10 indicators supported
 
 ---
 
@@ -239,6 +240,70 @@ import EnhancedInfrastructureIndicators from '../components/EnhancedInfrastructu
 - Registry config integration
 - Performance optimized rendering
 - Statistics dan charts dalam satu component
+
+---
+
+### EnvironmentIndicatorContent
+**Container untuk environment indicators**
+
+```jsx
+import EnvironmentIndicatorContent from '../components/EnvironmentIndicatorContent';
+
+<EnvironmentIndicatorContent
+  villageData={data}
+  filters={currentFilters}
+/>
+```
+
+**Features:**
+- Registry-based configuration (config/environmentIndicatorConfig.js)
+- Universal visualization pattern
+- Support untuk mode "Semua" dan single indicator
+- 10 indicators supported
+- Comparison mode enabled
+
+---
+
+### EnvironmentIndicatorShell
+**Universal visualization untuk environment data**
+
+```jsx
+import EnvironmentIndicatorShell from '../components/environment/EnvironmentIndicatorShell';
+
+<EnvironmentIndicatorShell
+  config={indicatorConfig}
+  villageData={data}
+  filters={currentFilters}
+/>
+```
+
+**Features:**
+- 3 StatCards (totals per category)
+- 3 Chart types (Donut, Bar, Stacked)
+- Sortable detail table
+- ApexCharts integration
+- Responsive Material-UI Grid v2
+
+---
+
+### ComparisonView
+**Comparison mode untuk multiple villages**
+
+```jsx
+import ComparisonView from '../components/ComparisonView';
+
+<ComparisonView
+  category="lingkungan"
+  villageData={data}
+/>
+```
+
+**Features:**
+- Side-by-side village comparison
+- Support qualitative data
+- Configurable indicators via categories.config.js
+- 5 villages × N indicators table
+- Color-coded status indicators
 
 ---
 
