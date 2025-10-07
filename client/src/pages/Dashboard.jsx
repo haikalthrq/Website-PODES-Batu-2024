@@ -38,6 +38,7 @@ import {
 import AppHeader from '../components/AppHeader';
 import RankingChart from '../components/RankingChart';
 import DistributionChart from '../components/DistributionChart';
+import GeospatialMap from '../components/GeospatialMap';
 import { podesService } from '../services/api';
 
 const Dashboard = ({ setCurrentPage }) => {
@@ -843,6 +844,11 @@ const Dashboard = ({ setCurrentPage }) => {
                 </Card>
               </Grid>
             </Grid>
+
+            {/* Geospatial Map Section */}
+            <Box sx={{ mt: 4 }}>
+              <GeospatialMap />
+            </Box>
 
             {/* Data Coverage Stats */}
             <Box sx={{ 
