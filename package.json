@@ -1,19 +1,4 @@
 {
-  "name": "podes-batu-2024",
-  "version": "1.0.0",
-  "description": "PODES Batu 2024 Dashboard - Vite Frontend + Serverless API on Vercel",
-  "private": true,
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "scripts": {
-    "install:all": "npm install --prefix client && npm install --prefix api",
-    "build": "cd client && npm install && npm run build",
-    "dev:client": "cd client && npm run dev",
-    "dev:server": "cd server && npm run dev",
-    "vercel-build": "cd client && npm install && npm run build"
-  },
-  "dependencies": {},
   "devDependencies": {
     "glob": "^11.0.3"
   }

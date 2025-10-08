@@ -102,3 +102,6 @@ temp/
 
 # Hot reload
 .hot-update.*
+
+# Specstory history
+.specstory/
