@@ -14,16 +14,48 @@ function getPodesData() {
   }
 
   try {
-    // In Vercel serverless, __dirname is the function directory
-    // We need to go up to find the data directory
-    const dataPath = path.join(__dirname, '../../server/data/data_podes_2024.json');
-    const rawData = fs.readFileSync(dataPath, 'utf8');
+    // Try multiple path strategies for different environments
+    const possiblePaths = [
+      // Vercel serverless environment (from /var/task)
+      path.join(process.cwd(), 'server/data/data_podes_2024.json'),
+      // Relative from api/_lib directory
+      path.join(__dirname, '../../server/data/data_podes_2024.json'),
+      // Alternative relative path
+      path.join(__dirname, '../../../server/data/data_podes_2024.json'),
+    ];
+
+    let rawData = null;
+    let usedPath = null;
+
+    for (const dataPath of possiblePaths) {
+      try {
+        if (fs.existsSync(dataPath)) {
+          rawData = fs.readFileSync(dataPath, 'utf8');
+          usedPath = dataPath;
+          break;
+        }
+      } catch (err) {
+        console.log(`Path not found: ${dataPath}`);
+        continue;
+      }
+    }
+
+    if (!rawData) {
+      console.error('❌ Could not find data file in any of the expected locations');
+      console.error('Tried paths:', possiblePaths);
+      console.error('Current working directory:', process.cwd());
+      console.error('__dirname:', __dirname);
+      throw new Error('Data file not found');
+    }
+
     podesData = JSON.parse(rawData);
-    console.log(`✅ PODES data loaded: ${podesData.length} villages`);
+    console.log(`✅ PODES data loaded from: ${usedPath}`);
+    console.log(`✅ Villages count: ${podesData.length}`);
     return podesData;
   } catch (error) {
     console.error('❌ Error loading PODES data:', error.message);
-    throw new Error('Failed to load PODES data');
+    console.error('Stack trace:', error.stack);
+    throw new Error('Failed to load PODES data: ' + error.message);
   }
 }
 

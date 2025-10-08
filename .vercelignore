@@ -6,7 +6,13 @@ notebooks/
 docs/
 
 # Server folder (replaced by /api serverless functions)
+# Note: server/data/ MUST be included for serverless functions to access PODES data
 server/node_modules/
+server/controllers/
+server/routes/
+server/server.js
+server/package.json
+server/package-lock.json
 
 # Local environment files
 *.local
