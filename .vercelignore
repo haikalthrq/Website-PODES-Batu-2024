@@ -1,0 +1,52 @@
+# Exclude from Vercel deployment
+
+# Development files
+.specstory/
+notebooks/
+docs/
+
+# Server folder (replaced by /api serverless functions)
+server/node_modules/
+
+# Local environment files
+*.local
+.env
+.env.local
+.env.*.local
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs (will be rebuilt by Vercel)
+client/dist/
+client/node_modules/
+
+# Test files
+*.test.js
+*.spec.js
+__tests__/
+coverage/
+
+# Git files
+.git/
+.gitignore
+
+# Scripts not needed in production
+scripts/
+
+# README files (already documented in deployment guide)
+README.md
