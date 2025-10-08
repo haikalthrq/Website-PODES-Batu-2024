@@ -49,13 +49,7 @@ const KPICards = ({ analysisData }) => {
   }
 
   if (analysisData.type === 'qualitative') {
-    const { most, mostCount } = analysisData.kpis || {};
-    return (
-      <Grid container spacing={2} sx={{ mb: 2 }}>
-        <Grid size={{ xs: 12, sm: 6 }}><Metric label="Kategori Terbanyak" value={most ?? '-'} /></Grid>
-        <Grid size={{ xs: 12, sm: 6 }}><Metric label="Jumlah" value={mostCount ?? '-'} /></Grid>
-      </Grid>
-    );
+    return null;
   }
 
   return null;
