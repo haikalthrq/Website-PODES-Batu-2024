@@ -16,12 +16,14 @@ function getPodesData() {
   try {
     // Try multiple path strategies for different environments
     const possiblePaths = [
+      // NEW: Data file in api/data folder (best for Vercel)
+      path.join(__dirname, '../data/data_podes_2024.json'),
       // Vercel serverless environment (from /var/task)
+      path.join(process.cwd(), 'api/data/data_podes_2024.json'),
+      // Fallback: server/data folder
       path.join(process.cwd(), 'server/data/data_podes_2024.json'),
       // Relative from api/_lib directory
       path.join(__dirname, '../../server/data/data_podes_2024.json'),
-      // Alternative relative path
-      path.join(__dirname, '../../../server/data/data_podes_2024.json'),
     ];
 
     let rawData = null;
