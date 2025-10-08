@@ -22,7 +22,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// Komponen untuk auto fit bounds
+// Komponen untuk auto fit bounds dengan pembatasan
 function FitBounds({ geojson }) {
   const map = useMap();
   
@@ -31,7 +31,11 @@ function FitBounds({ geojson }) {
       const geoJsonLayer = L.geoJSON(geojson);
       const bounds = geoJsonLayer.getBounds();
       if (bounds.isValid()) {
-        map.fitBounds(bounds);
+        // Fit bounds dengan padding untuk tampilan lebih baik
+        map.fitBounds(bounds, {
+          padding: [20, 20], // Padding 20px dari edges
+          maxZoom: 13 // Prevent zooming in too much on initial load
+        });
       }
     }
   }, [geojson, map]);
@@ -297,6 +301,9 @@ const GeospatialMap = () => {
             {indicators.find(i => i.value === selectedIndicator)?.label.replace(/^(📚 Pendidikan|🏥 Kesehatan|🌐 Infrastruktur|⚠️ Kebencanaan|♻️ Sampah|🌳 Lingkungan): /, '') || 'Pilih Indikator'}
           </strong>
         </Typography>
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, fontStyle: 'italic' }}>
+          📍 Peta terfokus pada wilayah Kota Batu, Jawa Timur (24 desa/kelurahan)
+        </Typography>
       </Box>
 
       {/* Dropdown Indikator */}
@@ -350,8 +357,15 @@ const GeospatialMap = () => {
       {/* Peta */}
       <Box sx={{ height: 600, width: '100%', borderRadius: 1, overflow: 'hidden' }}>
         <MapContainer
-          center={[-7.8671, 112.5239]}
+          center={[-7.8671, 112.5239]} // Koordinat pusat Kota Batu
           zoom={12}
+          minZoom={10} // Minimum zoom - prevent zooming out too far
+          maxZoom={18} // Maximum zoom untuk detail
+          maxBounds={[
+            [-8.5, 111.5],  // Southwest corner (batas bawah Jawa Timur)
+            [-7.2, 113.5]   // Northeast corner (batas atas Jawa Timur)
+          ]}
+          maxBoundsViscosity={1.0} // Prevents map from being dragged outside bounds
           style={{ height: '100%', width: '100%' }}
           scrollWheelZoom={true}
         >
