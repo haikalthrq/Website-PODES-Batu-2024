@@ -7,4 +7,14 @@ export default defineConfig({
   optimizeDeps: {
     include: ["echarts", "echarts-for-react"],
   },
+  server: {
+    proxy: {
+      // Proxy API requests to backend during local development
+      '/api': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
 })
