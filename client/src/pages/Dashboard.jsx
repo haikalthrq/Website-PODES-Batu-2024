@@ -31,13 +31,15 @@ import {
   LocalHospital,
   Menu,
   PlayArrow,
-  Insights
+  Insights,
+  Map
 } from '@mui/icons-material';
 
 // Import components
 import AppHeader from '../components/AppHeader';
 import RankingChart from '../components/RankingChart';
 import DistributionChart from '../components/DistributionChart';
+import GeospatialMap from '../components/GeospatialMap';
 import { podesService } from '../services/api';
 
 const Dashboard = ({ setCurrentPage }) => {
@@ -217,8 +219,14 @@ const Dashboard = ({ setCurrentPage }) => {
                 </Box>
               </Box>
 
-              {/* Enhanced Primary CTA Button */}
-              <Box sx={{ display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' } }}>
+              {/* Enhanced Primary CTA Buttons */}
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: 2,
+                justifyContent: { xs: 'center', md: 'flex-start' },
+                alignItems: 'center'
+              }}>
                 <Button 
                   variant="contained"
                   size="large"
@@ -249,6 +257,46 @@ const Dashboard = ({ setCurrentPage }) => {
                   onClick={() => setCurrentPage('analysis')}
                 >
                   Mulai Analisis Sekarang
+                </Button>
+
+                <Button 
+                  variant="outlined"
+                  size="large"
+                  startIcon={<Map sx={{ fontSize: '1.2rem' }} />}
+                  sx={{
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                    color: 'white',
+                    fontWeight: 700,
+                    px: { xs: 4, md: 5 },
+                    py: { xs: 1.8, md: 2.2 },
+                    minHeight: { xs: 56, md: 64 },
+                    minWidth: { xs: 260, md: 280 },
+                    borderRadius: 3,
+                    borderWidth: 2,
+                    textTransform: 'none',
+                    fontSize: { xs: '1.05rem', md: '1.15rem' },
+                    backdropFilter: 'blur(4px)',
+                    bgcolor: 'rgba(255, 255, 255, 0.1)',
+                    '&:hover': {
+                      borderColor: 'white',
+                      borderWidth: 2,
+                      bgcolor: 'rgba(255, 255, 255, 0.2)',
+                      transform: 'translateY(-3px)',
+                      boxShadow: '0 8px 32px rgba(255, 255, 255, 0.3)'
+                    },
+                    '&:active': {
+                      transform: 'translateY(-1px)'
+                    }
+                  }}
+                  onClick={() => {
+                    // Scroll to map section
+                    const mapSection = document.getElementById('geospatial-map-section');
+                    if (mapSection) {
+                      mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }}
+                >
+                  Peta Geospasial
                 </Button>
               </Box>
             </Grid>
@@ -843,6 +891,11 @@ const Dashboard = ({ setCurrentPage }) => {
                 </Card>
               </Grid>
             </Grid>
+
+            {/* Geospatial Map Section */}
+            <Box id="geospatial-map-section" sx={{ mt: 4, scrollMarginTop: '80px' }}>
+              <GeospatialMap />
+            </Box>
 
             {/* Data Coverage Stats */}
             <Box sx={{ 
