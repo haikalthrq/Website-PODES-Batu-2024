@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   Box,
   Typography,
@@ -16,6 +16,7 @@ import {
   Cell,
   LabelList
 } from 'recharts';
+import { ChartDownloadButton } from './charts/ChartDownloadButton';
 
 const BinaryDistributionBar = ({ 
   data, 
@@ -24,6 +25,7 @@ const BinaryDistributionBar = ({
   indicatorName = "Indikator"
 }) => {
   const theme = useTheme();
+  const chartContainerRef = useRef(null);
 
   if (loading) {
     return (
@@ -130,7 +132,25 @@ const BinaryDistributionBar = ({
   };
 
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
+    <Box sx={{ width: '100%', height: '100%', position: 'relative' }}>
+      {/* Download Button */}
+      {data && data.length > 0 && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            zIndex: 10
+          }}
+        >
+          <ChartDownloadButton
+            chartRef={chartContainerRef}
+            filename={`analisis-distribusi-${indicatorName.toLowerCase().replace(/\s+/g, '-')}`}
+            size="small"
+          />
+        </Box>
+      )}
+      
       <Typography 
         variant="h6" 
         sx={{ 
@@ -144,7 +164,10 @@ const BinaryDistributionBar = ({
         📈 {title}
       </Typography>
       
-      <Box sx={{ width: '100%', height: 280, mb: 2 }}>
+      <Box 
+        ref={chartContainerRef}
+        sx={{ width: '100%', height: 280, mb: 2 }}
+      >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={distributionData}

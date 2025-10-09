@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -38,6 +38,7 @@ import {
 } from 'recharts';
 import * as XLSX from 'xlsx';
 import { streamlitColors } from '../utils/streamlitColors';
+import { ChartDownloadButton } from './charts/ChartDownloadButton';
 
 // DEPRECATED: This component is replaced by UniversalIndicatorPanel  
 // TODO: Remove this file after confirming no external dependencies
@@ -127,6 +128,10 @@ const EnhancedQualitativeViz = ({
   // Color palette matching Streamlit
   const COLORS = streamlitColors.qualitative;
 
+  // Refs for download
+  const pieChartRef = useRef(null);
+  const barChartRef = useRef(null);
+
   // Excel download function
   const handleDownloadExcel = () => {
     if (!analysisData?.cleanData) return;
@@ -209,13 +214,29 @@ const EnhancedQualitativeViz = ({
       <Grid container spacing={3}>
         {/* Left Column: Donut Chart */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <Card elevation={2} sx={{ height: '100%' }}>
+          <Card elevation={2} sx={{ height: '100%', position: 'relative' }}>
             <CardContent>
+              {/* Download Button */}
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 8,
+                  right: 8,
+                  zIndex: 10
+                }}
+              >
+                <ChartDownloadButton
+                  chartRef={pieChartRef}
+                  filename={`distribusi-kategori-${title?.toLowerCase().replace(/\s+/g, '-') || 'chart'}`}
+                  size="small"
+                />
+              </Box>
+              
               <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 🍩 Distribusi Kategori
               </Typography>
 
-              <Box sx={{ height: 300, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Box ref={pieChartRef} sx={{ height: 300, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -285,13 +306,29 @@ const EnhancedQualitativeViz = ({
 
         {/* Right Column: Ranking Bar Chart */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <Card elevation={2} sx={{ height: '100%' }}>
+          <Card elevation={2} sx={{ height: '100%', position: 'relative' }}>
             <CardContent>
+              {/* Download Button */}
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 8,
+                  right: 8,
+                  zIndex: 10
+                }}
+              >
+                <ChartDownloadButton
+                  chartRef={barChartRef}
+                  filename={`ranking-kategori-${title?.toLowerCase().replace(/\s+/g, '-') || 'chart'}`}
+                  size="small"
+                />
+              </Box>
+              
               <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 📊 Ranking Kategori
               </Typography>
 
-              <Box sx={{ height: 350 }}>
+              <Box ref={barChartRef} sx={{ height: 350 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={barData}

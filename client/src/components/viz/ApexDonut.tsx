@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
 import ReactApexChart from "react-apexcharts";
 import ChartVisibilityGuard from "./ChartVisibilityGuard";
 import { donutOptions } from "./apexDefault";
 import { getSeriesColors } from "./vizTheme";
+import { ChartDownloadButton } from "../charts/ChartDownloadButton";
 
 interface ApexDonutProps {
   title: string;
@@ -19,6 +20,8 @@ export default function ApexDonut({
   height = 340,
   className = ""
 }: ApexDonutProps) {
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  
   const debugLog = (...args: any[]) => {
     if (import.meta.env?.VITE_VIZ_DEBUG === 'true') {
       console.debug('[ApexDonut]', title, ':', ...args);
@@ -69,23 +72,34 @@ export default function ApexDonut({
   });
 
   return (
-    <ChartVisibilityGuard 
-      minHeight={height}
-      className={className}
-      onVisible={() => debugLog('Chart became visible')}
-      render={({ width }) => {
-        debugLog('Rendering with dimensions', { width, height });
-        
-        return (
-          <ReactApexChart 
-            type="donut"
-            width={width}
-            height={height} // Use fixed height instead of container height
-            series={series}
-            options={chartOptions}
-          />
-        );
-      }}
-    />
+    <div ref={chartContainerRef} style={{ position: 'relative' }}>
+      {/* Download Button */}
+      <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 10 }}>
+        <ChartDownloadButton
+          chartRef={chartContainerRef}
+          filename={title ? title.toLowerCase().replace(/\s+/g, '-') : 'donut-chart'}
+          size="small"
+        />
+      </div>
+      
+      <ChartVisibilityGuard 
+        minHeight={height}
+        className={className}
+        onVisible={() => debugLog('Chart became visible')}
+        render={({ width }) => {
+          debugLog('Rendering with dimensions', { width, height });
+          
+          return (
+            <ReactApexChart 
+              type="donut"
+              width={width}
+              height={height} // Use fixed height instead of container height
+              series={series}
+              options={chartOptions}
+            />
+          );
+        }}
+      />
+    </div>
   );
 }
