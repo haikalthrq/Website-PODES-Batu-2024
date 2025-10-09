@@ -41,6 +41,7 @@ import { DashboardSkeleton } from '../components/LoadingSkeletons';
 import { getCategoryConfig } from '../config/categories.config';
 import { getIndicatorsForCategory } from '../config/selectors';
 import { podesService } from '../services/api';
+import GeospatialMap from '../components/GeospatialMap';
 
 const AnalysisPage = ({ setCurrentPage }) => {
   const theme = useTheme();
@@ -53,6 +54,41 @@ const AnalysisPage = ({ setCurrentPage }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [metadata, setMetadata] = useState(null);
+  
+  // Initialize viewMode from sessionStorage or URL parameter
+  const [viewMode, setViewMode] = useState(() => {
+    // First check sessionStorage (set from landing page "Peta Geospasial" button)
+    const savedViewMode = sessionStorage.getItem('viewMode');
+    if (savedViewMode === 'peta') {
+      sessionStorage.removeItem('viewMode'); // Clear after reading
+      return 'peta';
+    }
+    
+    // Clear any stale sessionStorage
+    sessionStorage.removeItem('viewMode');
+    
+    // Then check URL parameter
+    const params = new URLSearchParams(window.location.search);
+    const urlViewMode = params.get('viewMode');
+    
+    if (urlViewMode === 'peta') {
+      // Clear the URL parameter after reading to prevent it from persisting
+      params.delete('viewMode');
+      const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+      window.history.replaceState({}, '', newUrl);
+      return 'peta';
+    }
+    
+    // Clean up any stale viewMode parameter in URL
+    if (urlViewMode) {
+      params.delete('viewMode');
+      const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+      window.history.replaceState({}, '', newUrl);
+    }
+    
+    // Default to 'analisis' mode
+    return 'analisis';
+  });
   
   // Constants for indicator selection
   const INDICATOR_ALL = 'Semua';
@@ -353,8 +389,10 @@ const AnalysisPage = ({ setCurrentPage }) => {
             })}
             categories={categories}
             getIndicatorsForCategory={getIndicatorsForCategory}
-            kecamatanList={['Semua Kecamatan', ...kecamatanList.sort()]}
-            desaList={['Semua Desa/Kelurahan', ...desaList]}
+            kecamatanList={kecamatanList.sort()}
+            desaList={desaList}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
           />
         </Box>
       )}
@@ -412,8 +450,10 @@ const AnalysisPage = ({ setCurrentPage }) => {
             })}
             categories={categories}
             getIndicatorsForCategory={getIndicatorsForCategory}
-            kecamatanList={['Semua Kecamatan', ...kecamatanList.sort()]}
-            desaList={['Semua Desa/Kelurahan', ...desaList]}
+            kecamatanList={kecamatanList.sort()}
+            desaList={desaList}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
           />
         </Drawer>
       )}
@@ -506,7 +546,15 @@ const AnalysisPage = ({ setCurrentPage }) => {
         <Container maxWidth="xl" sx={{ py: 3 }}>
         {loading ? (
           <DashboardSkeleton />
+        ) : viewMode === 'peta' ? (
+          /* Peta Geospasial Mode */
+          <Fade in={!loading} timeout={300}>
+            <Box>
+              <GeospatialMap />
+            </Box>
+          </Fade>
         ) : (
+          /* Mode Analisis */
           <Fade in={!loading} timeout={300}>
             <Box>
               {/* KPI Cards Section */}
