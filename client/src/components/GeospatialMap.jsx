@@ -123,6 +123,10 @@ const GeospatialMap = () => {
         podesVillages: podes.length
       });
       
+      // Debug: Check village name matching
+      console.log('📍 Sample GeoJSON names:', geoJson.features?.slice(0, 3).map(f => f.properties.nm_kelurahan));
+      console.log('📍 Sample PODES names:', podes.slice(0, 3).map(d => d.nama_desa));
+      
       setGeoData(geoJson);
       setPodesData(podes);
       setLoading(false);
@@ -214,12 +218,20 @@ const GeospatialMap = () => {
     return colorMap[value] || colorMap['default'];
   };
 
+  // Helper function untuk matching nama desa yang lebih fleksibel
+  const normalizeDesaName = (name) => {
+    return name?.toUpperCase().trim().replace(/\s+/g, '');
+  };
+
+  const findDesaData = (desaNameFromGeo) => {
+    const normalized = normalizeDesaName(desaNameFromGeo);
+    return podesData.find(d => normalizeDesaName(d.nama_desa) === normalized);
+  };
+
   // Style untuk setiap feature
   const getFeatureStyle = (feature) => {
-    const desaName = feature.properties.nm_kelurahan?.toUpperCase().trim();
-    const desaData = podesData.find(
-      d => d.nama_desa?.toUpperCase().trim() === desaName
-    );
+    const desaName = feature.properties.nm_kelurahan;
+    const desaData = findDesaData(desaName);
     
     const value = desaData ? desaData[selectedIndicator] : 0;
     
@@ -235,13 +247,11 @@ const GeospatialMap = () => {
 
   // Event handlers untuk interaktivitas
   const onEachFeature = (feature, layer) => {
-    const desaName = feature.properties.nm_kelurahan?.toUpperCase().trim();
+    const desaName = feature.properties.nm_kelurahan;
     
     // Update tooltip dynamically on mouseover
     layer.on('mouseover', (e) => {
-      const desaData = podesData.find(
-        d => d.nama_desa?.toUpperCase().trim() === desaName
-      );
+      const desaData = findDesaData(desaName);
       
       const value = desaData ? desaData[selectedIndicator] : 'N/A';
       const indicatorLabel = indicators.find(i => i.value === selectedIndicator)?.label || selectedIndicator;

@@ -347,7 +347,179 @@ const UniversalIndicatorPanel = ({ category, indicator, config }) => {
 - Filter selections
 - Shareable state
 
-## 🔧 Development Workflow
+## �️ Geospatial Mapping Architecture
+
+### Overview
+Interactive map visualization menggunakan **React Leaflet** dengan **GeoJSON** untuk spatial data.
+
+```
+┌────────────────────────────────────────────────────────┐
+│              GeospatialMap Component                   │
+├────────────────────────────────────────────────────────┤
+│  🗺️ MapContainer (React Leaflet)                       │
+│    ├─ TileLayer (OpenStreetMap)                       │
+│    ├─ GeoJSON Layer (Village boundaries)             │
+│    └─ FitBounds (Auto-zoom to data)                  │
+├────────────────────────────────────────────────────────┤
+│  📊 Data Integration                                   │
+│    ├─ GeoJSON: /public/kelurahan.geojson             │
+│    ├─ PODES Data: API /api/villages                  │
+│    └─ Name Matching: normalizeDesaName()             │
+├────────────────────────────────────────────────────────┤
+│  🎨 Visualization Features                             │
+│    ├─ Dynamic coloring based on indicator values     │
+│    ├─ Hover tooltips with village info               │
+│    ├─ Indicator selector (30+ options)               │
+│    └─ Category-grouped dropdown                      │
+└────────────────────────────────────────────────────────┘
+```
+
+### Key Components
+
+#### 1. **GeospatialMap.jsx**
+Main component handling map visualization:
+
+```javascript
+const GeospatialMap = () => {
+  // State management
+  const [geoData, setGeoData] = useState(null);        // GeoJSON boundaries
+  const [podesData, setPodesData] = useState([]);      // PODES statistics
+  const [selectedIndicator, setSelectedIndicator] = useState('jumlah_sd');
+  
+  // Load both data sources
+  useEffect(() => {
+    Promise.all([
+      fetch('/kelurahan.geojson'),                     // Village boundaries
+      fetch('http://localhost:5001/api/villages')      // PODES data
+    ]).then(/* merge data */);
+  }, []);
+  
+  return (
+    <MapContainer 
+      center={[-7.8671, 112.5239]}                     // Kota Batu center
+      zoom={12}
+      maxBounds={[[-8.5, 111.5], [-7.2, 113.5]]}      // East Java bounds
+      minZoom={10}
+      maxZoom={18}
+    >
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      <GeoJSON data={geoData} style={getFeatureStyle} onEachFeature={onEachFeature} />
+      <FitBounds geojson={geoData} />
+    </MapContainer>
+  );
+};
+```
+
+#### 2. **Smart Name Matching**
+Handles village name variations (e.g., "Sumberbrantas" vs "SUMBER BRANTAS"):
+
+```javascript
+// Normalize function removes spaces and standardizes case
+const normalizeDesaName = (name) => {
+  return name?.toUpperCase().trim().replace(/\s+/g, '');
+};
+
+const findDesaData = (desaNameFromGeo) => {
+  const normalized = normalizeDesaName(desaNameFromGeo);
+  return podesData.find(d => normalizeDesaName(d.nama_desa) === normalized);
+};
+```
+
+**Why this matters**: 
+- GeoJSON: `"Sumberbrantas"` (no space)
+- PODES data: `"SUMBER BRANTAS"` (with space)
+- Normalization: Both become `"SUMBERBRANTAS"` ✅
+
+#### 3. **Dynamic Styling**
+Color coding based on indicator values:
+
+```javascript
+const getColor = (value, indicator) => {
+  // Quantitative indicators (numeric values)
+  if (quantitativeIndicators.includes(indicator)) {
+    // Gradient: white → red for increasing values
+    const ranges = { jumlah_sd: [0, 2, 4, 6], ... };
+    const colors = ['#fee5d9', '#fcae91', '#fb6a4a', '#de2d26'];
+    // Return color based on value range
+  }
+  
+  // Qualitative indicators (categories)
+  const colorMap = {
+    'Ada': '#10b981',                // Green for good
+    'Tidak Ada': '#f87171',          // Red for bad
+    'Sangat Kuat': '#10b981',        // Signal strength
+    'Lemah': '#fbbf24',              // Yellow for moderate
+  };
+  return colorMap[value] || '#94a3b8';
+};
+```
+
+#### 4. **Interactive Features**
+Hover effects and tooltips:
+
+```javascript
+const onEachFeature = (feature, layer) => {
+  layer.on('mouseover', (e) => {
+    const desaData = findDesaData(feature.properties.nm_kelurahan);
+    const value = desaData[selectedIndicator];
+    
+    // Show tooltip with village name and indicator value
+    layer.bindTooltip(`
+      <strong>${feature.properties.nm_kelurahan}</strong><br/>
+      ${indicatorLabel}: <strong>${value}</strong>
+    `).openTooltip();
+    
+    // Highlight on hover
+    layer.setStyle({ weight: 3, fillOpacity: 0.9 });
+  });
+  
+  layer.on('mouseout', () => {
+    layer.closeTooltip();
+    layer.setStyle(getFeatureStyle(feature));  // Reset style
+  });
+};
+```
+
+### Map Configuration
+
+#### Bounds & Zoom
+```javascript
+{
+  center: [-7.8671, 112.5239],                    // Kota Batu coordinates
+  zoom: 12,                                       // Initial zoom level
+  maxBounds: [[-8.5, 111.5], [-7.2, 113.5]],     // East Java region
+  minZoom: 10,                                    // Prevent zooming out too far
+  maxZoom: 18,                                    // Allow detailed village view
+  maxBoundsViscosity: 1.0                         // Hard boundary (can't drag outside)
+}
+```
+
+**Rationale**:
+- Focus on Kota Batu while showing context (Jawa Timur)
+- Prevent users from scrolling to irrelevant regions
+- Balance between overview and detail
+
+### Indicator Categories
+30+ indicators grouped by category:
+- 📚 **Pendidikan**: TK, SD, SMP, SMA (4 indicators)
+- 🏥 **Kesehatan**: RS, Puskesmas, Rawat Inap (3 indicators)
+- 🌐 **Infrastruktur**: BTS, Sinyal, Internet, Penerangan (5 indicators)
+- ⚠️ **Kebencanaan**: Peringatan Dini, Alat Keselamatan, Rambu, Simulasi (4 indicators)
+- ♻️ **Sampah**: TPS, TPS3R, Pemilahan, Partisipasi (6 indicators)
+- 🌳 **Lingkungan**: Komunitas, Bakar Lahan, Pencemaran, Kayu Bakar (5 indicators)
+
+### Data Sources
+1. **GeoJSON**: `/client/public/kelurahan.geojson` (66,171 lines)
+   - Village boundaries (polygons)
+   - 24 desa/kelurahan in Kota Batu
+   - Properties: `nm_kelurahan`, `kd_propinsi`, `kd_kecamatan`
+
+2. **PODES API**: `http://localhost:5001/api/villages`
+   - Statistical data per village
+   - 40+ indicators per village
+   - Updated from Survey PODES 2024
+
+## �🔧 Development Workflow
 
 ### 1. **Adding New Features**
 ```
@@ -366,6 +538,7 @@ const UniversalIndicatorPanel = ({ category, indicator, config }) => {
 3. Add console.logs for data flow tracing
 4. Verify API responses in Network tab
 5. Check component props/state
+6. For maps: Verify GeoJSON structure & name matching
 ```
 
 ## 📚 Learning Resources
@@ -383,6 +556,8 @@ const UniversalIndicatorPanel = ({ category, indicator, config }) => {
 ### Tools & Libraries
 - [Material-UI](https://mui.com/) - Component library
 - [ApexCharts](https://apexcharts.com/docs/react-charts/) - Chart library
+- [React Leaflet](https://react-leaflet.js.org/) - Map components
+- [Leaflet](https://leafletjs.com/) - Interactive maps
 - [React Router](https://reactrouter.com/) - Routing
 
 ---
