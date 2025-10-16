@@ -30,7 +30,15 @@ function loadPodesData() {
 
 // Middleware
 app.use(helmet()); // Security headers
-app.use(cors()); // Enable CORS
+
+// Configure CORS to accept requests from frontend
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || '*', // Allow all origins in development, specific in production
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions)); // Enable CORS with options
+
 app.use(compression()); // Compress responses
 app.use(morgan('combined')); // Logging
 app.use(express.json());
@@ -55,27 +63,42 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Root endpoint
-app.get('/', (req, res) => {
-  res.json({
-    message: 'PODES Batu 2024 Dashboard API',
-    version: '1.0.0',
-    endpoints: [
-      'GET /api/health - Health check',
-      'GET /api/villages - Get all villages with optional filtering',
-      'GET /api/villages/compare - Compare specific villages',
-      'GET /api/metadata - Get metadata for filters'
-    ]
+// Serve static files from React build (for production)
+const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
+if (fs.existsSync(clientBuildPath)) {
+  app.use(express.static(clientBuildPath));
+  console.log('✅ Serving static frontend from:', clientBuildPath);
+  
+  // Handle React Router - send all non-API requests to index.html
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
   });
-});
+} else {
+  // Development mode - API only
+  console.log('⚠️ No frontend build found. API-only mode.');
+  
+  // Root endpoint - API info
+  app.get('/', (req, res) => {
+    res.json({
+      message: 'PODES Batu 2024 Dashboard API',
+      version: '1.0.0',
+      endpoints: [
+        'GET /api/health - Health check',
+        'GET /api/villages - Get all villages with optional filtering',
+        'GET /api/villages/compare - Compare specific villages',
+        'GET /api/metadata - Get metadata for filters'
+      ]
+    });
+  });
 
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: `Route ${req.originalUrl} not found`
+  // 404 handler for API-only mode
+  app.use('*', (req, res) => {
+    res.status(404).json({
+      error: 'Not Found',
+      message: `Route ${req.originalUrl} not found`
+    });
   });
-});
+}
 
 // Error handler
 app.use((error, req, res, next) => {
