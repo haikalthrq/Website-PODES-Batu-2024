@@ -12,16 +12,19 @@ Aplikasi web modern berbasis **React + Vite** (frontend) dan **Express.js** (bac
 - **Filter Dinamis**: Filter berdasarkan kategori, indikator, kecamatan, dan desa
 - **Visualisasi Chart**: Donut charts, bar charts, stacked charts dengan ApexCharts
 - **Statistik Real-time**: KPI cards dan summary statistics
+- **Peta Geospasial**: Visualisasi data per desa dengan React Leaflet & OpenStreetMap
 
 ### 📱 Interface Modern
 - **Responsive Design**: Material-UI (MUI) components dengan dark/light theme
 - **Performance Optimized**: Lazy loading, memoization, dan efficient re-rendering
 - **User Experience**: Loading states, error boundaries, dan smooth animations
+- **Interactive Maps**: Hover tooltips, dynamic coloring, dan indicator switching
 
 ### 🔧 Architecture
 - **Component-based**: Modular React components dengan clear separation of concerns
 - **Registry Pattern**: Centralized configuration untuk indicator definitions
 - **API Integration**: RESTful backend dengan clean data transformation
+- **Smart Name Matching**: Flexible village name normalization untuk data consistency
 
 ## 🏗️ Struktur Project
 
@@ -109,7 +112,8 @@ npm run dev  # Vite dev server runs on http://localhost:3000
 - **⚡ Vite** - Super fast build tool (lebih cepat dari Create React App)
 - **🎨 Material-UI (MUI) v5** - Pre-built beautiful components dengan Grid v2
 - **📊 ApexCharts** - Interactive chart library (replaced ECharts for better performance)
-- **🛣️ React Router** - Single Page Application routing
+- **�️ React Leaflet** - Interactive maps dengan OpenStreetMap & GeoJSON support
+- **�🛣️ React Router** - Single Page Application routing
 - **🎯 Registry Pattern** - Centralized configuration system
 
 ### Backend (Server)  
@@ -151,6 +155,12 @@ npm run dev  # Vite dev server runs on http://localhost:3000
 - **Donut Charts**: Category distribution with percentages (ApexCharts)
 - **Stacked Bar Charts**: Multi-category comparison by district (kecamatan)
 - **Horizontal Bar Charts**: Ranking and comparison visualizations
+- **Geospatial Map**: Interactive choropleth maps dengan 30+ indicators
+  - Dynamic color coding berdasarkan nilai indikator
+  - Hover tooltips dengan informasi desa
+  - Indicator selector dengan category grouping
+  - Focused view pada Kota Batu & Jawa Timur
+  - Smart village name matching (handles spacing variations)
 - **KPI Cards**: Key statistics and summary metrics with icons
 - **Data Tables**: Detailed village information with sorting/filtering (Material-UI TableSortLabel)
 - **Comparison Tables**: Side-by-side village comparison mode
@@ -223,9 +233,14 @@ cd client && npm run dev
 - **Architecture**: [System Architecture](docs/ARCHITECTURE.md)
 
 ### Project Info
-- **Version**: 1.0.0
-- **Last Updated**: October 2025
+- **Version**: 1.1.0
+- **Last Updated**: October 9, 2025
 - **Compatibility**: Node.js 16+, Modern Browsers
+- **Recent Updates**:
+  - ✅ Added Geospatial Map with React Leaflet
+  - ✅ Fixed village name matching (Sumber Brantas spacing issue)
+  - ✅ Removed redundant KPI cards from qualitative indicators
+  - ✅ Enhanced map bounds to focus on Kota Batu region
 
 ---
 

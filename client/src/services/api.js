@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-// Use relative path for API calls - works in both local dev and production
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'http://localhost:5001/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

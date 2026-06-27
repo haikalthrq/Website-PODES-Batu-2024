@@ -102,3 +102,9 @@ temp/
 
 # Hot reload
 .hot-update.*
+
+# Specstory history
+.specstory/
+
+# Graphify generated knowledge graph
+graphify-out/

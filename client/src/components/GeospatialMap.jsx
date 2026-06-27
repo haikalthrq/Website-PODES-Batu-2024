@@ -46,55 +46,67 @@ function FitBounds({ geojson }) {
 const GeospatialMap = () => {
   const [geoData, setGeoData] = useState(null);
   const [podesData, setPodesData] = useState([]);
-  const [selectedIndicator, setSelectedIndicator] = useState('jumlah_sd');
+  const [selectedCategory, setSelectedCategory] = useState('Semua');
+  const [selectedIndicator, setSelectedIndicator] = useState('Semua');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Daftar indikator yang tersedia (dikelompokkan berdasarkan kategori)
-  const indicators = [
-    // === PENDIDIKAN ===
-    { value: 'jumlah_tk', label: '📚 Pendidikan: Jumlah TK', category: 'Pendidikan' },
-    { value: 'jumlah_sd', label: '📚 Pendidikan: Jumlah SD', category: 'Pendidikan' },
-    { value: 'jumlah_smp', label: '📚 Pendidikan: Jumlah SMP', category: 'Pendidikan' },
-    { value: 'jumlah_sma', label: '📚 Pendidikan: Jumlah SMA', category: 'Pendidikan' },
-    
-    // === KESEHATAN ===
-    { value: 'jumlah_rs', label: '🏥 Kesehatan: Jumlah Rumah Sakit', category: 'Kesehatan' },
-    { value: 'jumlah_puskesmas', label: '🏥 Kesehatan: Jumlah Puskesmas', category: 'Kesehatan' },
-    { value: 'jumlah_puskesmas_inap', label: '🏥 Kesehatan: Jumlah Puskesmas Rawat Inap', category: 'Kesehatan' },
-    
-    // === INFRASTRUKTUR & KONEKTIVITAS ===
-    { value: 'jumlah_bts', label: '🌐 Infrastruktur: Jumlah BTS', category: 'Infrastruktur' },
-    { value: 'kekuatan_sinyal', label: '🌐 Infrastruktur: Kekuatan Sinyal', category: 'Infrastruktur' },
-    { value: 'jenis_sinyal_internet', label: '🌐 Infrastruktur: Jenis Sinyal Internet', category: 'Infrastruktur' },
-    { value: 'status_penerangan_jalan_surya', label: '🌐 Infrastruktur: Penerangan Jalan Tenaga Surya', category: 'Infrastruktur' },
-    { value: 'status_penerangan_jalan_utama', label: '🌐 Infrastruktur: Penerangan Jalan Utama', category: 'Infrastruktur' },
-    
-    // === LINGKUNGAN & KEBENCANAAN ===
-    { value: 'status_peringatan_dini', label: '⚠️ Kebencanaan: Sistem Peringatan Dini', category: 'Lingkungan' },
-    { value: 'status_alat_keselamatan', label: '⚠️ Kebencanaan: Alat Keselamatan', category: 'Lingkungan' },
-    { value: 'status_rambu_evakuasi', label: '⚠️ Kebencanaan: Rambu Evakuasi', category: 'Lingkungan' },
-    { value: 'partisipasi_simulasi_bencana', label: '⚠️ Kebencanaan: Partisipasi Simulasi Bencana', category: 'Lingkungan' },
-    { value: 'partisipasi_gladi_siaga_bencana', label: '⚠️ Kebencanaan: Partisipasi Gladi Siaga Bencana', category: 'Lingkungan' },
-    { value: 'kejadian_tanah_longsor', label: '⚠️ Kebencanaan: Kejadian Tanah Longsor', category: 'Lingkungan' },
-    { value: 'kejadian_banjir', label: '⚠️ Kebencanaan: Kejadian Banjir', category: 'Lingkungan' },
-    { value: 'kejadian_gempa', label: '⚠️ Kebencanaan: Kejadian Gempa', category: 'Lingkungan' },
-    
-    // === PENGELOLAAN SAMPAH ===
-    { value: 'status_tps', label: '♻️ Sampah: Tempat Penampungan Sampah (TPS)', category: 'Lingkungan' },
-    { value: 'status_tps3r', label: '♻️ Sampah: TPS 3R (Reduce, Reuse, Recycle)', category: 'Lingkungan' },
-    { value: 'status_dilakukan_pemilahan_sampah', label: '♻️ Sampah: Status Pemilahan Sampah', category: 'Lingkungan' },
-    { value: 'kebiasaan_pemilahan_sampah', label: '♻️ Sampah: Kebiasaan Pemilahan Sampah', category: 'Lingkungan' },
-    { value: 'warga_terlibat_olah_sampah', label: '♻️ Sampah: Partisipasi Warga Pengolahan Sampah', category: 'Lingkungan' },
-    { value: 'status_buang_sampah_dibakar', label: '♻️ Sampah: Status Sampah Dibakar', category: 'Lingkungan' },
-    
-    // === LINGKUNGAN LAINNYA ===
-    { value: 'komunitas_lingkungan', label: '🌳 Lingkungan: Komunitas Lingkungan', category: 'Lingkungan' },
-    { value: 'kebiasaan_bakar_lahan', label: '🌳 Lingkungan: Kebiasaan Bakar Lahan', category: 'Lingkungan' },
-    { value: 'permukiman_bantaran_sungai', label: '🌳 Lingkungan: Permukiman Bantaran Sungai', category: 'Lingkungan' },
-    { value: 'sumber_pencemaran_air_dari_pabrik', label: '🌳 Lingkungan: Pencemaran Air dari Pabrik', category: 'Lingkungan' },
-    { value: 'jumlah_keluarga_pengguna_kayu_bakar', label: '🌳 Lingkungan: Jumlah Keluarga Pengguna Kayu Bakar', category: 'Lingkungan' },
-  ];
+  // Kategori utama (dengan opsi "Semua")
+  const categories = ['Semua', 'Pendidikan', 'Kesehatan', 'Infrastruktur & Konektivitas', 'Lingkungan & Kebencanaan'];
+
+  // Mapping indikator per kategori (sama seperti di sidebar)
+  const indicatorsByCategory = {
+    'Semua': {
+      'Semua': 'Semua Indikator'
+    },
+    'Pendidikan': {
+      'jumlah_tk': 'Jumlah TK',
+      'jumlah_sd': 'Jumlah SD',
+      'jumlah_smp': 'Jumlah SMP',
+      'jumlah_sma': 'Jumlah SMA'
+    },
+    'Kesehatan': {
+      'jumlah_rs': 'Jumlah Rumah Sakit',
+      'jumlah_puskesmas': 'Jumlah Puskesmas',
+      'jumlah_puskesmas_inap': 'Jumlah Puskesmas Rawat Inap'
+    },
+    'Infrastruktur & Konektivitas': {
+      'jumlah_bts': 'Jumlah BTS',
+      'kekuatan_sinyal': 'Kekuatan Sinyal',
+      'jenis_sinyal_internet': 'Jenis Sinyal Internet',
+      'status_penerangan_jalan_surya': 'Penerangan Jalan Tenaga Surya',
+      'status_penerangan_jalan_utama': 'Penerangan Jalan Utama'
+    },
+    'Lingkungan & Kebencanaan': {
+      'status_peringatan_dini': 'Sistem Peringatan Dini',
+      'status_alat_keselamatan': 'Alat Keselamatan',
+      'status_rambu_evakuasi': 'Rambu Evakuasi',
+      'partisipasi_simulasi_bencana': 'Partisipasi Simulasi Bencana',
+      'partisipasi_gladi_siaga_bencana': 'Partisipasi Gladi Siaga Bencana',
+      'kejadian_tanah_longsor': 'Kejadian Tanah Longsor',
+      'kejadian_banjir': 'Kejadian Banjir',
+      'kejadian_gempa': 'Kejadian Gempa',
+      'status_tps': 'Tempat Penampungan Sampah (TPS)',
+      'status_tps3r': 'TPS 3R (Reduce, Reuse, Recycle)',
+      'status_dilakukan_pemilahan_sampah': 'Status Pemilahan Sampah',
+      'kebiasaan_pemilahan_sampah': 'Kebiasaan Pemilahan Sampah',
+      'warga_terlibat_olah_sampah': 'Partisipasi Warga Pengolahan Sampah',
+      'status_buang_sampah_dibakar': 'Status Sampah Dibakar',
+      'komunitas_lingkungan': 'Komunitas Lingkungan',
+      'kebiasaan_bakar_lahan': 'Kebiasaan Bakar Lahan',
+      'permukiman_bantaran_sungai': 'Permukiman Bantaran Sungai',
+      'sumber_pencemaran_air_dari_pabrik': 'Pencemaran Air dari Pabrik',
+      'jumlah_keluarga_pengguna_kayu_bakar': 'Jumlah Keluarga Pengguna Kayu Bakar'
+    }
+  };
+
+  // Handler untuk perubahan kategori
+  const handleCategoryChange = (newCategory) => {
+    setSelectedCategory(newCategory);
+    // Set indikator pertama dari kategori baru
+    const firstIndicator = Object.keys(indicatorsByCategory[newCategory])[0];
+    setSelectedIndicator(firstIndicator);
+  };
 
   // Load data saat komponen di-mount
   useEffect(() => {
@@ -110,8 +122,8 @@ const GeospatialMap = () => {
       if (!geoResponse.ok) throw new Error('Failed to load GeoJSON');
       const geoJson = await geoResponse.json();
       
-      // Load PODES data from API - use relative path for Vercel deployment
-      const podesResponse = await fetch('/api/villages');
+      // Load PODES data from correct endpoint
+      const podesResponse = await fetch('http://localhost:5001/api/villages');
       if (!podesResponse.ok) throw new Error('Failed to load PODES data');
       const podesResult = await podesResponse.json();
       
@@ -122,6 +134,10 @@ const GeospatialMap = () => {
         geoFeatures: geoJson.features?.length,
         podesVillages: podes.length
       });
+      
+      // Debug: Check village name matching
+      console.log('📍 Sample GeoJSON names:', geoJson.features?.slice(0, 3).map(f => f.properties.nm_kelurahan));
+      console.log('📍 Sample PODES names:', podes.slice(0, 3).map(d => d.nama_desa));
       
       setGeoData(geoJson);
       setPodesData(podes);
@@ -135,6 +151,9 @@ const GeospatialMap = () => {
 
   // Fungsi untuk mendapatkan warna berdasarkan nilai
   const getColor = (value, indicator) => {
+    // Jika "Semua" dipilih, gunakan warna netral/default
+    if (indicator === 'Semua') return '#94a3b8'; // Gray neutral color
+    
     if (!value || value === 0 || value === 'Tidak Terdefinisi' || value === 'N/A') return '#f7f7f7';
     
     // Indikator kuantitatif (angka)
@@ -214,12 +233,20 @@ const GeospatialMap = () => {
     return colorMap[value] || colorMap['default'];
   };
 
+  // Helper function untuk matching nama desa yang lebih fleksibel
+  const normalizeDesaName = (name) => {
+    return name?.toUpperCase().trim().replace(/\s+/g, '');
+  };
+
+  const findDesaData = (desaNameFromGeo) => {
+    const normalized = normalizeDesaName(desaNameFromGeo);
+    return podesData.find(d => normalizeDesaName(d.nama_desa) === normalized);
+  };
+
   // Style untuk setiap feature
   const getFeatureStyle = (feature) => {
-    const desaName = feature.properties.nm_kelurahan?.toUpperCase().trim();
-    const desaData = podesData.find(
-      d => d.nama_desa?.toUpperCase().trim() === desaName
-    );
+    const desaName = feature.properties.nm_kelurahan;
+    const desaData = findDesaData(desaName);
     
     const value = desaData ? desaData[selectedIndicator] : 0;
     
@@ -235,22 +262,28 @@ const GeospatialMap = () => {
 
   // Event handlers untuk interaktivitas
   const onEachFeature = (feature, layer) => {
-    const desaName = feature.properties.nm_kelurahan?.toUpperCase().trim();
+    const desaName = feature.properties.nm_kelurahan;
     
     // Update tooltip dynamically on mouseover
     layer.on('mouseover', (e) => {
-      const desaData = podesData.find(
-        d => d.nama_desa?.toUpperCase().trim() === desaName
-      );
+      const desaData = findDesaData(desaName);
       
-      const value = desaData ? desaData[selectedIndicator] : 'N/A';
-      const indicatorLabel = indicators.find(i => i.value === selectedIndicator)?.label || selectedIndicator;
-      
-      // Update tooltip content
-      const tooltipContent = `<div style="padding: 8px;">
-        <strong>${feature.properties.nm_kelurahan}</strong><br/>
-        ${indicatorLabel}: <strong>${value}</strong>
-      </div>`;
+      // Jika "Semua" dipilih, tampilkan informasi desa saja
+      let tooltipContent;
+      if (selectedIndicator === 'Semua') {
+        tooltipContent = `<div style="padding: 8px;">
+          <strong>${feature.properties.nm_kelurahan}</strong><br/>
+          <em style="color: #6b7280; font-size: 0.875rem;">Pilih indikator spesifik untuk melihat data</em>
+        </div>`;
+      } else {
+        const value = desaData ? desaData[selectedIndicator] : 'N/A';
+        const indicatorLabel = indicatorsByCategory[selectedCategory]?.[selectedIndicator] || selectedIndicator;
+        
+        tooltipContent = `<div style="padding: 8px;">
+          <strong>${feature.properties.nm_kelurahan}</strong><br/>
+          ${indicatorLabel}: <strong>${value}</strong>
+        </div>`;
+      }
       
       layer.bindTooltip(tooltipContent, { 
         permanent: false, 
@@ -298,7 +331,10 @@ const GeospatialMap = () => {
         <Typography variant="body2" color="text.secondary" gutterBottom>
           Visualisasi data PODES 2024 per desa/kelurahan - 
           <strong style={{ color: '#1976d2', marginLeft: '4px' }}>
-            {indicators.find(i => i.value === selectedIndicator)?.label.replace(/^(📚 Pendidikan|🏥 Kesehatan|🌐 Infrastruktur|⚠️ Kebencanaan|♻️ Sampah|🌳 Lingkungan): /, '') || 'Pilih Indikator'}
+            {selectedCategory === 'Semua' && selectedIndicator === 'Semua' 
+              ? 'Semua Kategori & Indikator' 
+              : `${selectedCategory} - ${indicatorsByCategory[selectedCategory]?.[selectedIndicator] || 'Pilih Indikator'}`
+            }
           </strong>
         </Typography>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, fontStyle: 'italic' }}>
@@ -306,49 +342,36 @@ const GeospatialMap = () => {
         </Typography>
       </Box>
 
-      {/* Dropdown Indikator */}
-      <Box sx={{ mb: 2 }}>
-        <FormControl fullWidth size="small" sx={{ maxWidth: 400 }}>
+      {/* Filter 2 Tingkat: Kategori dan Indikator */}
+      <Box sx={{ mb: 2, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+        {/* Filter Kategori Utama */}
+        <FormControl size="small" sx={{ minWidth: 250, flex: 1 }}>
+          <Typography variant="caption" sx={{ mb: 0.5, fontWeight: 600, color: '#374151' }}>
+            Kategori Utama
+          </Typography>
+          <Select
+            value={selectedCategory}
+            onChange={(e) => handleCategoryChange(e.target.value)}
+            displayEmpty
+          >
+            {categories.map((cat) => (
+              <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Filter Indikator Spesifik */}
+        <FormControl size="small" sx={{ minWidth: 250, flex: 1 }}>
+          <Typography variant="caption" sx={{ mb: 0.5, fontWeight: 600, color: '#374151' }}>
+            Indikator Spesifik
+          </Typography>
           <Select
             value={selectedIndicator}
             onChange={(e) => setSelectedIndicator(e.target.value)}
             displayEmpty
           >
-            {/* Group by category */}
-            <ListSubheader sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-              📚 PENDIDIKAN
-            </ListSubheader>
-            {indicators.filter(ind => ind.category === 'Pendidikan').map((ind) => (
-              <MenuItem key={ind.value} value={ind.value} sx={{ pl: 4 }}>
-                {ind.label.replace('📚 Pendidikan: ', '')}
-              </MenuItem>
-            ))}
-            
-            <ListSubheader sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-              🏥 KESEHATAN
-            </ListSubheader>
-            {indicators.filter(ind => ind.category === 'Kesehatan').map((ind) => (
-              <MenuItem key={ind.value} value={ind.value} sx={{ pl: 4 }}>
-                {ind.label.replace('🏥 Kesehatan: ', '')}
-              </MenuItem>
-            ))}
-            
-            <ListSubheader sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-              🌐 INFRASTRUKTUR & KONEKTIVITAS
-            </ListSubheader>
-            {indicators.filter(ind => ind.category === 'Infrastruktur').map((ind) => (
-              <MenuItem key={ind.value} value={ind.value} sx={{ pl: 4 }}>
-                {ind.label.replace('🌐 Infrastruktur: ', '')}
-              </MenuItem>
-            ))}
-            
-            <ListSubheader sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-              ⚠️ LINGKUNGAN & KEBENCANAAN
-            </ListSubheader>
-            {indicators.filter(ind => ind.category === 'Lingkungan').map((ind) => (
-              <MenuItem key={ind.value} value={ind.value} sx={{ pl: 4 }}>
-                {ind.label.replace(/^(⚠️ Kebencanaan|♻️ Sampah|🌳 Lingkungan): /, '')}
-              </MenuItem>
+            {Object.entries(indicatorsByCategory[selectedCategory] || {}).map(([key, label]) => (
+              <MenuItem key={key} value={key}>{label}</MenuItem>
             ))}
           </Select>
         </FormControl>

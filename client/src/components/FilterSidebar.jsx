@@ -13,7 +13,9 @@ const FilterSidebar = ({
   categories,
   getIndicatorsForCategory,
   kecamatanList,
-  desaList
+  desaList,
+  viewMode,
+  onViewModeChange
 }) => {
   // Debug logging
   console.log('[FilterSidebar] Received filters:', filters);
@@ -24,7 +26,82 @@ const FilterSidebar = ({
   const content = (
     <Box sx={{ width: mobile ? '100%' : drawerWidth, p: 3 }} role="presentation">
       <Stack spacing={3}>
-        {/* Category Filter */}
+        {/* View Mode Toggle */}
+        <Box>
+          <Typography variant="subtitle2" sx={{ 
+            fontWeight: 600, 
+            mb: 1.5, 
+            color: '#374151',
+            fontSize: '0.875rem'
+          }}>
+            Mode Tampilan
+          </Typography>
+          <Stack direction="row" spacing={1}>
+            <Button
+              fullWidth
+              variant={viewMode === 'analisis' ? 'contained' : 'outlined'}
+              onClick={() => onViewModeChange && onViewModeChange('analisis')}
+              sx={{
+                py: 1.5,
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                ...(viewMode === 'analisis' ? {
+                  bgcolor: '#2563eb',
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: '#1d4ed8'
+                  }
+                } : {
+                  borderColor: '#d1d5db',
+                  color: '#6b7280',
+                  '&:hover': {
+                    borderColor: '#2563eb',
+                    bgcolor: '#f3f4f6',
+                    color: '#2563eb'
+                  }
+                })
+              }}
+            >
+              Mode Analisis
+            </Button>
+            <Button
+              fullWidth
+              variant={viewMode === 'peta' ? 'contained' : 'outlined'}
+              onClick={() => onViewModeChange && onViewModeChange('peta')}
+              sx={{
+                py: 1.5,
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                ...(viewMode === 'peta' ? {
+                  bgcolor: '#10b981',
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: '#059669'
+                  }
+                } : {
+                  borderColor: '#d1d5db',
+                  color: '#6b7280',
+                  '&:hover': {
+                    borderColor: '#10b981',
+                    bgcolor: '#f3f4f6',
+                    color: '#10b981'
+                  }
+                })
+              }}
+            >
+              Peta Geospasial
+            </Button>
+          </Stack>
+        </Box>
+
+        {/* Show other filters only in 'analisis' mode */}
+        {viewMode === 'analisis' && (
+          <>
+            {/* Category Filter */}
         <Box>
           <Typography variant="subtitle2" sx={{ 
             fontWeight: 600, 
@@ -127,6 +204,12 @@ const FilterSidebar = ({
                 }
               }}
               displayEmpty
+              renderValue={(selected) => {
+                if (!selected || selected === '') {
+                  return <em>🌐 Semua Kecamatan</em>;
+                }
+                return selected;
+              }}
             >
               <MenuItem value="">
                 <em>🌐 Semua Kecamatan</em>
@@ -166,6 +249,12 @@ const FilterSidebar = ({
                 }
               }}
               displayEmpty
+              renderValue={(selected) => {
+                if (!selected || selected === '') {
+                  return <em>🏠 Semua Desa/Kelurahan</em>;
+                }
+                return selected;
+              }}
             >
               <MenuItem value="">
                 <em>🏠 Semua Desa/Kelurahan</em>
@@ -176,11 +265,19 @@ const FilterSidebar = ({
             </Select>
           </FormControl>
         </Box>
+          </>
+        )}
 
-        {/* Reset Button */}
+        {/* Reset Button - Always visible and returns to Mode Analisis */}
         <Box sx={{ pt: 2, borderTop: '1px solid #e5e7eb' }}>
           <Button
-            onClick={onReset}
+            onClick={() => {
+              // Reset filters and switch back to analisis mode
+              if (viewMode === 'peta' && onViewModeChange) {
+                onViewModeChange('analisis');
+              }
+              onReset();
+            }}
             variant="outlined"
             size="medium"
             fullWidth

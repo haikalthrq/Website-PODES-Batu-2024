@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Box, Typography, Skeleton } from '@mui/material';
 import ReactApexChart from 'react-apexcharts';
 import { useDeferredMeasure } from './useDeferredMeasure';
 import { UnifiedLegend, LegendItem } from './UnifiedLegend';
 import { perKecamatanByCategory, perKecamatanByBins } from '../../utils/infra/distribution';
 import { getCategoryColor, getBinColor, AXIS } from '../theme/chartColors';
+import { ChartDownloadButton } from './ChartDownloadButton';
 
 type VillageRow = { 
   nama_kecamatan: string; 
@@ -40,6 +41,7 @@ export const BarGroupedStacked: React.FC<BarGroupedStackedProps> = ({
   yAxisLabel = "Jumlah Desa"
 }) => {
   const { ref, ready, width } = useDeferredMeasure();
+  const chartContainerRef = useRef<HTMLDivElement>(null);
 
   // Helper to get display label (shorter version for charts)
   const getDisplayLabel = (originalLabel: string) => {
@@ -218,9 +220,28 @@ export const BarGroupedStacked: React.FC<BarGroupedStackedProps> = ({
         width: '100%',
         minHeight: height,
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        position: 'relative'
       }}
     >
+      {/* Download Button */}
+      {ready && totalData > 0 && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            zIndex: 10
+          }}
+        >
+          <ChartDownloadButton
+            chartRef={chartContainerRef}
+            filename={title ? title.toLowerCase().replace(/\s+/g, '-') : 'bar-chart'}
+            size="small"
+          />
+        </Box>
+      )}
+
       {/* Title */}
       {title && (
         <Typography
@@ -238,6 +259,7 @@ export const BarGroupedStacked: React.FC<BarGroupedStackedProps> = ({
 
       {/* Chart container */}
       <Box
+        ref={chartContainerRef}
         sx={{
           width: '100%',
           height: height - (title ? 100 : 80), // Reserve space for legend

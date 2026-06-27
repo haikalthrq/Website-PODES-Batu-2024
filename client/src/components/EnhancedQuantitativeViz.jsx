@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -37,6 +37,7 @@ import {
 } from 'recharts';
 import * as XLSX from 'xlsx';
 import { streamlitColors, streamlitChartConfig } from '../utils/streamlitColors';
+import { ChartDownloadButton } from './charts/ChartDownloadButton';
 
 // DEPRECATED: This component is replaced by UniversalIndicatorPanel
 // TODO: Remove this file after confirming no external dependencies
@@ -225,13 +226,35 @@ const EnhancedQuantitativeViz = ({
   const primaryColor = CHART_COLORS[0]; // Blue for quantitative main
   const secondaryColor = CHART_COLORS[2]; // Teal for distribution
 
+  // Refs for download
+  const rankingChartRef = useRef(null);
+  const distributionChartRef = useRef(null);
+
   return (
     <Box>
       <Grid container spacing={3}>
         {/* Left Column: Ranking Visualization */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <Card elevation={2} sx={{ height: '100%' }}>
+          <Card elevation={2} sx={{ height: '100%', position: 'relative' }}>
             <CardContent>
+              {/* Download Button */}
+              {!isUniform && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: 8,
+                    right: 8,
+                    zIndex: 10
+                  }}
+                >
+                  <ChartDownloadButton
+                    chartRef={rankingChartRef}
+                    filename={`ranking-desa-${title?.toLowerCase().replace(/\s+/g, '-') || 'chart'}`}
+                    size="small"
+                  />
+                </Box>
+              )}
+              
               <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 🏆 Ranking Desa
               </Typography>
@@ -241,7 +264,7 @@ const EnhancedQuantitativeViz = ({
                   ✨ Semua desa memiliki nilai seragam: <strong>{stats.max}</strong>
                 </Alert>
               ) : (
-                <Box sx={{ height: 350 }}>
+                <Box ref={rankingChartRef} sx={{ height: 350 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={topPerformers.slice().reverse()} // Reverse for proper display
@@ -309,13 +332,29 @@ const EnhancedQuantitativeViz = ({
 
         {/* Right Column: Distribution Analysis */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <Card elevation={2} sx={{ height: '100%' }}>
+          <Card elevation={2} sx={{ height: '100%', position: 'relative' }}>
             <CardContent>
+              {/* Download Button */}
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 8,
+                  right: 8,
+                  zIndex: 10
+                }}
+              >
+                <ChartDownloadButton
+                  chartRef={distributionChartRef}
+                  filename={`distribusi-${title?.toLowerCase().replace(/\s+/g, '-') || 'chart'}`}
+                  size="small"
+                />
+              </Box>
+              
               <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 📊 Analisis Distribusi
               </Typography>
 
-              <Box sx={{ height: 350 }}>
+              <Box ref={distributionChartRef} sx={{ height: 350 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={distributionData}

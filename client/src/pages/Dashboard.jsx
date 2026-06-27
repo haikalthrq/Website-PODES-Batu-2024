@@ -39,7 +39,6 @@ import {
 import AppHeader from '../components/AppHeader';
 import RankingChart from '../components/RankingChart';
 import DistributionChart from '../components/DistributionChart';
-import GeospatialMap from '../components/GeospatialMap';
 import { podesService } from '../services/api';
 
 const Dashboard = ({ setCurrentPage }) => {
@@ -289,10 +288,11 @@ const Dashboard = ({ setCurrentPage }) => {
                     }
                   }}
                   onClick={() => {
-                    // Scroll to map section
-                    const mapSection = document.getElementById('geospatial-map-section');
-                    if (mapSection) {
-                      mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Navigate to analysis page with map mode
+                    if (setCurrentPage) {
+                      // Store viewMode preference in sessionStorage
+                      sessionStorage.setItem('viewMode', 'peta');
+                      setCurrentPage('analysis');
                     }
                   }}
                 >
@@ -891,11 +891,6 @@ const Dashboard = ({ setCurrentPage }) => {
                 </Card>
               </Grid>
             </Grid>
-
-            {/* Geospatial Map Section */}
-            <Box id="geospatial-map-section" sx={{ mt: 4, scrollMarginTop: '80px' }}>
-              <GeospatialMap />
-            </Box>
 
             {/* Data Coverage Stats */}
             <Box sx={{ 

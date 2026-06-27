@@ -14,6 +14,7 @@ import {
   ResponsiveContainer,
   Cell
 } from 'recharts';
+import { ChartDownloadButton } from './charts/ChartDownloadButton';
 
 // Palet warna ramah visualisasi dengan 7 warna berbeda
 const CHART_COLORS = [
@@ -35,6 +36,7 @@ const RankingBarHorizontal = ({
 }) => {
   const theme = useTheme();
   const containerRef = useRef(null);
+  const chartContainerRef = useRef(null);
   const [chartKey, setChartKey] = useState(0);
 
   // Handle accordion resize dan data changes
@@ -208,8 +210,25 @@ const RankingBarHorizontal = ({
 
 
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
-
+    <Box sx={{ width: '100%', height: '100%', position: 'relative' }}>
+      
+      {/* Download Button */}
+      {rowsSanitized.length > 0 && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            zIndex: 10
+          }}
+        >
+          <ChartDownloadButton
+            chartRef={chartContainerRef}
+            filename={`analisis-jumlah-${indicatorName.toLowerCase().replace(/\s+/g, '-')}`}
+            size="small"
+          />
+        </Box>
+      )}
       
       {/* Title and summary */}
       <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
@@ -220,7 +239,10 @@ const RankingBarHorizontal = ({
       </Typography>
       
       <Box 
-        ref={containerRef}
+        ref={(el) => {
+          containerRef.current = el;
+          chartContainerRef.current = el;
+        }}
         sx={{ 
           width: '100%', 
           height: 420,

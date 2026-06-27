@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Box, Typography, Skeleton } from '@mui/material';
 import ReactApexChart from 'react-apexcharts';
 import { useDeferredMeasure } from './useDeferredMeasure';
 import { UnifiedLegend } from './UnifiedLegend';
 import { histogramCounts } from '../../utils/infra/distribution';
 import { getBinColor, AXIS } from '../theme/chartColors';
+import { ChartDownloadButton } from './ChartDownloadButton';
 
 type VillageRow = { 
   nama_kecamatan: string; 
@@ -36,6 +37,7 @@ export const Histogram: React.FC<HistogramProps> = ({
   yAxisLabel = "Jumlah Desa"
 }) => {
   const { ref, ready, width } = useDeferredMeasure();
+  const chartContainerRef = useRef<HTMLDivElement>(null);
 
   // Calculate histogram data
   const histData = histogramCounts(rows, valueKey, bins);
@@ -161,9 +163,28 @@ export const Histogram: React.FC<HistogramProps> = ({
         width: '100%',
         minHeight: height,
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        position: 'relative'
       }}
     >
+      {/* Download Button */}
+      {ready && totalDesa > 0 && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            zIndex: 10
+          }}
+        >
+          <ChartDownloadButton
+            chartRef={chartContainerRef}
+            filename={title ? title.toLowerCase().replace(/\s+/g, '-') : 'histogram'}
+            size="small"
+          />
+        </Box>
+      )}
+
       {/* Title */}
       {title && (
         <Typography
@@ -181,6 +202,7 @@ export const Histogram: React.FC<HistogramProps> = ({
 
       {/* Chart container */}
       <Box
+        ref={chartContainerRef}
         sx={{
           width: '100%',
           height: height - (title ? 80 : 60), // Reserve space for legend

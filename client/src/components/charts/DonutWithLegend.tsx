@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Box, Typography, Skeleton } from '@mui/material';
 import ReactApexChart from 'react-apexcharts';
 import { useDeferredMeasure } from './useDeferredMeasure';
 import { UnifiedLegend, LegendItem } from './UnifiedLegend';
 import { getCategoryColor } from '../theme/chartColors';
+import { ChartDownloadButton } from './ChartDownloadButton';
 
 export interface DonutDataItem {
   label: string;
@@ -33,6 +34,7 @@ export const DonutWithLegend: React.FC<DonutWithLegendProps> = ({
   showValues = false
 }) => {
   const { ref, ready, width } = useDeferredMeasure();
+  const chartContainerRef = useRef<HTMLDivElement>(null);
 
   // Calculate total and prepare chart data
   const total = data.reduce((sum, item) => sum + item.value, 0);
@@ -149,9 +151,28 @@ export const DonutWithLegend: React.FC<DonutWithLegendProps> = ({
         minHeight: height,
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        position: 'relative'
       }}
     >
+      {/* Download Button */}
+      {ready && chartData.length > 0 && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            zIndex: 10
+          }}
+        >
+          <ChartDownloadButton
+            chartRef={chartContainerRef}
+            filename={title ? title.toLowerCase().replace(/\s+/g, '-') : 'donut-chart'}
+            size="small"
+          />
+        </Box>
+      )}
+
       {/* Title */}
       {title && (
         <Typography
@@ -169,6 +190,7 @@ export const DonutWithLegend: React.FC<DonutWithLegendProps> = ({
 
       {/* Chart container */}
       <Box
+        ref={chartContainerRef}
         sx={{
           width: '100%',
           height: height - (title ? 60 : 40), // Reserve space for legend

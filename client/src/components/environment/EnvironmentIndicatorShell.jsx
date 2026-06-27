@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Box, Typography, Accordion, AccordionSummary, AccordionDetails, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, TableSortLabel } from '@mui/material';
 import { ExpandMore, TableChart } from '@mui/icons-material';
 import ReactApexChart from 'react-apexcharts';
@@ -6,6 +6,7 @@ import { buildStats, buildCharts, buildDetailTable } from '../../adapters/enviro
 import StatCards from '../unified/StatCards';
 import ChartCard from '../common/ChartCard';
 import { useSize } from '../../hooks/useSize';
+import { ChartDownloadButton } from '../charts/ChartDownloadButton';
 
 /**
  * Thin shell component for Environment indicators
@@ -92,8 +93,9 @@ export default function EnvironmentIndicatorShell({
   }
 
   // Auto-sizing chart wrapper component
-  const AutoChart = React.memo(({ options, series, type, minHeight = 260 }) => {
+  const AutoChart = React.memo(({ options, series, type, minHeight = 260, title = '' }) => {
     const { ref, size } = useSize();
+    const chartContainerRef = useRef(null);
     
     // Memoize height calculation
     const targetHeight = useMemo(() => {
@@ -108,6 +110,7 @@ export default function EnvironmentIndicatorShell({
         sx={{ 
           width: '100%', 
           minHeight: minHeight,
+          position: 'relative',
           // Hardware acceleration
           transform: 'translateZ(0)',
           willChange: 'auto',
@@ -116,14 +119,27 @@ export default function EnvironmentIndicatorShell({
           contentVisibility: 'auto'
         }}
       >
+        {/* Download Button */}
         {size.width > 0 && (
-          <ReactApexChart
-            options={options}
-            series={series}
-            type={type}
-            height={targetHeight}
-          />
+          <Box sx={{ position: 'absolute', top: 0, right: 0, zIndex: 10 }}>
+            <ChartDownloadButton
+              chartRef={chartContainerRef}
+              filename={title ? title.toLowerCase().replace(/\s+/g, '-') : 'chart'}
+              size="small"
+            />
+          </Box>
         )}
+        
+        <Box ref={chartContainerRef}>
+          {size.width > 0 && (
+            <ReactApexChart
+              options={options}
+              series={series}
+              type={type}
+              height={targetHeight}
+            />
+          )}
+        </Box>
       </Box>
     );
   }, (prevProps, nextProps) => {
@@ -131,7 +147,8 @@ export default function EnvironmentIndicatorShell({
     return (
       JSON.stringify(prevProps.series) === JSON.stringify(nextProps.series) &&
       prevProps.type === nextProps.type &&
-      prevProps.minHeight === nextProps.minHeight
+      prevProps.minHeight === nextProps.minHeight &&
+      prevProps.title === nextProps.title
     );
   });
 
@@ -238,6 +255,7 @@ export default function EnvironmentIndicatorShell({
                     series={chartData.map(item => item.value)}
                     type="donut"
                     minHeight={260}
+                    title={title}
                   />
                 </ChartCard>
               </Grid>
@@ -331,6 +349,7 @@ export default function EnvironmentIndicatorShell({
                 <ChartCard title={title} minHeight={320}>
                   <AutoChart
                     options={barOptions}
+                    title={title}
                     series={barSeries}
                     type="bar"
                     minHeight={260}

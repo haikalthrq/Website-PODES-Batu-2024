@@ -351,6 +351,62 @@ const getStatistics = async () => {
 };
 ```
 
+## 🗺️ Static GeoJSON Data
+
+### GeoJSON File
+```http
+GET /kelurahan.geojson
+```
+
+**Description**: Village/kelurahan boundary data for mapping
+**Location**: `/client/public/kelurahan.geojson`
+**Format**: GeoJSON FeatureCollection
+**Size**: ~3.2 MB (66,171 lines)
+
+**Structure**:
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "kd_propinsi": "35",
+        "kd_dati2": "79",
+        "kd_kecamatan": "002",
+        "kd_kelurahan": "009",
+        "nm_kelurahan": "Sumberbrantas"
+      },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[
+          [112.58182, -7.75116, 0.0],
+          [112.58194, -7.75127, 0.0]
+          // ... more coordinates
+        ]]]
+      }
+    }
+    // ... 23 more villages
+  ]
+}
+```
+
+**Usage in Frontend**:
+```javascript
+// Fetch GeoJSON for mapping
+const response = await fetch('/kelurahan.geojson');
+const geoData = await response.json();
+
+// Use with React Leaflet
+<GeoJSON data={geoData} style={styleFunction} />
+```
+
+**Important Notes**:
+- Contains boundary polygons for all 24 desa/kelurahan in Kota Batu
+- Property `nm_kelurahan` must be matched with PODES data `nama_desa`
+- Use `normalizeDesaName()` for name matching (handles spacing differences)
+- Coordinate system: WGS84 (EPSG:4326)
+
 ## 🧪 Testing API
 
 ### Using curl
@@ -371,6 +427,9 @@ curl -X POST http://localhost:5000/api/villages/compare \
     "villages": ["3571010001", "3571010002"],
     "indicators": ["jumlah_penduduk", "jumlah_tk"]
   }'
+
+# Get GeoJSON
+curl http://localhost:3000/kelurahan.geojson
 ```
 
 ### Using Postman
